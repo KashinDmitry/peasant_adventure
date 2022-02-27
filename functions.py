@@ -40,7 +40,7 @@ def inspect_item(drop):
 def drop_actions(player_inventory, drop):
     while True:
         empty_slots_in_inventory = player_inventory.inventory_size - len(Player.Inventory.inventory)
-        print("Choose action: 1 - take all, 2 - inspect X-th item, 3 - take X-th item, 4 - close drop menu")
+        print("Choose action: 1 - take all, 2 - inspect X-th item, 3 - take X-th item, 4 - open inventory, 5 - close drop menu")
         action = int(input())
         if action == 1:
             if len(drop) > empty_slots_in_inventory:
@@ -70,6 +70,9 @@ def drop_actions(player_inventory, drop):
                 show_items(drop)
                 continue
         elif action == 4:
+            Player.Inventory.inventory_actions(player_inventory)
+            continue
+        elif action == 5:
             break
         else:
             continue
@@ -101,7 +104,6 @@ def fight(player, enemy):
     while player.health > 0 and enemy.health > 0:
         if k % 2 == 0:
             player_strike = random.uniform(min_attack(player.base_attack), max_attack(player.base_attack))
-            #print("Playes attack basic ", player_strike)
             if attack_type() == "miss":
                 print('{yellow}Вы промахнулись{endcolor}'.format(yellow='\033[93m', endcolor='\033[0m'))
                 player_strike = 0
@@ -117,7 +119,6 @@ def fight(player, enemy):
             k += 1
         else:
             enemy_strike = random.uniform(min_attack(enemy.base_attack), max_attack(enemy.base_attack))
-            #print("Enemy attack basic ", enemy_strike)
             if attack_type() == "miss":
                 print('{yellow}Противник промахнулся{endcolor}'.format(yellow='\033[93m', endcolor='\033[0m'))
                 enemy_strike = 0
