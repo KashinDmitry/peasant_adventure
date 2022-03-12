@@ -3,11 +3,12 @@ from drop import *
 from classes import Player
 
 
-def drop_items(items, amount):
+def drop_items(amount):
+    items_for_drop = make_one_list_with_drop(list_of_all_items)
     print(f"You have found {amount} item(s):")
     drop = []
     for i in range(amount):
-        random_item = random.choice(items)
+        random_item = random.choice(items_for_drop)
         print(i+1, random_item.name)
         drop.append(random_item)
     return drop
@@ -19,9 +20,9 @@ def show_items(items_list):
 
 
 def take_item(player_inventory, item):
-    inventory_as_dict = Player.Inventory.inventory
-    if len(inventory_as_dict) < player_inventory.inventory_size:
-        inventory_as_dict.update({len(inventory_as_dict): item})
+    inventory_as_list = Player.Inventory.inventory
+    if len(inventory_as_list) < player_inventory.inventory_size:
+        inventory_as_list.append(item)
     else:
         print("Inventory is full")
 
@@ -71,6 +72,8 @@ def drop_actions(player_inventory, drop):
                 continue
         elif action == 4:
             Player.Inventory.inventory_actions(player_inventory)
+            print("Item(s) left in your drop:")
+            show_items(drop)
             continue
         elif action == 5:
             break
