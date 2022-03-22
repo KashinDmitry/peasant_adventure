@@ -6,11 +6,14 @@ class Unit:
         self.base_health = base_health
         self.base_attack = base_attack
 
-    def restore_health(self, value):
-        self.health += value
+    def restore_full_health(self):
+        self.health = self.base_health
 
-    def restore_full_health(self, base_health):
-        self.health = base_health
+    def restore_health(self, value):
+        if self.health + value >= self.base_health:
+            self.restore_full_health()
+        else:
+            self.health += value
 
 
 class Player(Unit):
@@ -72,16 +75,6 @@ class Player(Unit):
                     print(f"{key}: {self.armor[key].name} -", "armor:", self.armor[key].armor)
                     total_armor += self.armor[key].armor
             print(f"Total armor: {total_armor}")
-
-
-class Enemy(Unit):
-    def __init__(self, name, level, base_health, health, base_attack):
-        super().__init__(name, level, base_health, health, base_attack)
-        self.name = name
-        self.level = level
-        self.base_health = base_health
-        self.health = health
-        self.base_attack = base_attack
 
 
 class Food():

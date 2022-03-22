@@ -1,6 +1,7 @@
 import random
 from drop import *
 from classes import Player
+from classes import Shop
 
 
 def drop_items(amount):
@@ -79,6 +80,34 @@ def drop_actions(player_inventory, drop):
             break
         else:
             continue
+
+
+def shop_actions(player_inventory, shop_instance):
+    while True:
+        print("Choose action: 1 - show goods, 2 - buy item, 3 - sell item, 4 - close shop menu")
+        action = int(input())
+        if action == 1:
+            Shop.show_goods(shop_instance)
+            continue
+        elif action == 2:
+            print(f'You have {Player.Inventory.inventory_gold} gold')
+            print("Choose item to buy (1, 2, 3...)")
+            item_index = int(input())
+            Shop.buy_item_from_shop(shop_instance, item_index)
+            continue
+        elif action == 3:
+            Player.Inventory.show_inventory(player_inventory)
+            print("Choose item from inventory (1, 2, 3...)")
+            item_index = int(input())
+            print(f'You are going to sell {Player.Inventory.inventory[item_index-1].name}, are you sure? y/n')
+            answer = input()
+            if answer == 'y':
+                Shop.sell_item_to_shop(shop_instance, Player.Inventory.inventory[item_index-1])
+                print('Item was sold')
+            else:
+                continue
+        elif action == 4:
+            break
 
 
 def min_attack(base_attack):
