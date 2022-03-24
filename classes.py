@@ -39,19 +39,36 @@ class Player(Unit):
 
         def inventory_actions(self):
             while True:
+                action = ''
+                item_index = ''
                 print(
                     "Choose action: 1 - show inventory, 2 - remove X-th item from inventory, 3 - close inventory menu")
-                action = int(input())
+                try:
+                    action = int(input())
+                except ValueError:
+                    print("Incorrect input. Please enter a number")
                 if action == 1:
                     self.show_inventory()
                     continue
                 elif action == 2:
                     print("Choose item to remove (1, 2, 3...)")
-                    item_index = int(input())
-                    self.remove_item(item_index)
-                    continue
+                    try:
+                        item_index = int(input())
+                        self.remove_item(item_index)
+                        continue
+                    except ValueError:
+                        print("Incorrect input. Please enter a number")
+                        continue
+                    except TypeError:
+                        print("Incorrect input. Please enter a number")
+                        continue
+                    except IndexError:
+                        print("You have chosen item out of list. Please choose correct item")
+                        continue
                 elif action == 3:
                     break
+                else:
+                    continue
 
     class PlayerArmor:
         armor = {'HELMET': '-',

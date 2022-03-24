@@ -10,14 +10,20 @@ def drop_items(amount):
     drop = []
     for i in range(amount):
         random_item = random.choice(items_for_drop)
-        print(i+1, random_item.name)
+        print(i + 1, random_item.name)
         drop.append(random_item)
     return drop
 
 
+def drop_gold(player_inventory, defeated_enemy):
+    dropped_gold = round(random.uniform(defeated_enemy.level, defeated_enemy.level + 2))
+    player_inventory.inventory_gold += dropped_gold
+    print(f"You have found {dropped_gold} gold")
+
+
 def show_items(items_list):
     for i in range(len(items_list)):
-        print(i+1, items_list[i].name)
+        print(i + 1, items_list[i].name)
 
 
 def take_item(player_inventory, item):
@@ -35,18 +41,33 @@ def remove_item_from_list(items_list, item):
 
 def inspect_item(drop):
     print("Choose item to inspect (1, 2, 3...)")
-    item_index = int(input())
-    print(drop[item_index-1].description)
+    try:
+        item_index = int(input())
+        try:
+            print(drop[item_index - 1].description)
+        except IndexError:
+            print("You have chosen item out of list. Please choose correct item")
+    except ValueError:
+        print("Incorrect input. Please enter a number")
+    except TypeError:
+        print("Incorrect input. Please enter a number")
 
 
 def drop_actions(player_inventory, drop):
     while True:
+        action = ''
+        item_index = ''
         empty_slots_in_inventory = player_inventory.inventory_size - len(Player.Inventory.inventory)
-        print("Choose action: 1 - take all, 2 - inspect X-th item, 3 - take X-th item, 4 - open inventory, 5 - close drop menu")
-        action = int(input())
+        print(
+            "Choose action: 1 - take all, 2 - inspect X-th item, 3 - take X-th item, 4 - open inventory, 5 - close drop menu")
+        try:
+            action = int(input())
+        except ValueError:
+            print("Incorrect input. Please enter a number")
         if action == 1:
             if len(drop) > empty_slots_in_inventory:
-                print(f"Not enough space to take all items. Items in drop = {len(drop)}, empty slots in inventory = {empty_slots_in_inventory}")
+                print(
+                    f"Not enough space to take all items. Items in drop = {len(drop)}, empty slots in inventory = {empty_slots_in_inventory}")
                 continue
             else:
                 for item in drop:
@@ -57,13 +78,20 @@ def drop_actions(player_inventory, drop):
             continue
         elif action == 3:
             print("Choose item to take (1, 2, 3...)")
-            item_index = int(input())
-            take_item(player_inventory, drop[item_index-1])
-            if len(Player.Inventory.inventory) == player_inventory.inventory_size:  # возможно стоит реализовать покрасивее
+            try:
+                item_index = int(input())
+            except ValueError:
+                print("Incorrect input. Please enter a number")
+                continue
+            except TypeError:
+                print("Incorrect input. Please enter a number")
+                continue
+            take_item(player_inventory, drop[item_index - 1])
+            if len(
+                    Player.Inventory.inventory) == player_inventory.inventory_size:  # возможно стоит реализовать покрасивее
                 continue
             else:
-                remove_item_from_list(drop, drop[item_index-1])
-                print("Взяли вещь и удалили из дропа")
+                remove_item_from_list(drop, drop[item_index - 1])
             if len(drop) == 0:
                 print("Drop list is empty")
                 break
@@ -84,30 +112,57 @@ def drop_actions(player_inventory, drop):
 
 def shop_actions(player_inventory, shop_instance):
     while True:
+        action = ''
+        item_index = ''
+        answer = ''
         print("Choose action: 1 - show goods, 2 - buy item, 3 - sell item, 4 - close shop menu")
-        action = int(input())
+        try:
+            action = int(input())
+        except ValueError:
+            print("Incorrect input. Please enter a number")
         if action == 1:
             Shop.show_goods(shop_instance)
             continue
         elif action == 2:
             print(f'You have {Player.Inventory.inventory_gold} gold')
             print("Choose item to buy (1, 2, 3...)")
-            item_index = int(input())
-            Shop.buy_item_from_shop(shop_instance, item_index)
-            continue
+            try:
+                item_index = int(input())
+                Shop.buy_item_from_shop(shop_instance, item_index)
+                continue
+            except ValueError:
+                print("Incorrect input. Please enter a number")
+                continue
+            except TypeError:
+                print("Incorrect input. Please enter a number")
+                continue
+            except IndexError:
+                print("You have chosen item out of list. Please choose correct item")
+                continue
         elif action == 3:
             Player.Inventory.show_inventory(player_inventory)
             print("Choose item from inventory (1, 2, 3...)")
-            item_index = int(input())
-            print(f'You are going to sell {Player.Inventory.inventory[item_index-1].name}, are you sure? y/n')
-            answer = input()
-            if answer == 'y':
-                Shop.sell_item_to_shop(shop_instance, Player.Inventory.inventory[item_index-1])
-                print('Item was sold')
-            else:
-                continue
+            try:
+                item_index = int(input())
+                try:
+                    print(f'You are going to sell {Player.Inventory.inventory[item_index - 1].name}, are you sure? y/n')
+                    answer = input()
+                    if answer == 'y':
+                        Shop.sell_item_to_shop(shop_instance, Player.Inventory.inventory[item_index - 1])
+                        print('Item was sold')
+                    else:
+                        continue
+                except IndexError:
+                    print("You have chosen item out of list. Please choose correct item")
+                    continue
+            except ValueError:
+                print("Incorrect input. Please enter a number")
+            except TypeError:
+                print("Incorrect input. Please enter a number")
         elif action == 4:
             break
+        else:
+            continue
 
 
 def min_attack(base_attack):
@@ -165,7 +220,9 @@ def fight(player, enemy):
             k += 1
     if enemy.health <= 0:
         print(f"{enemy.name} has been defeated")
-        enemy.restore_full_health(enemy.base_health)
+        drop_items(enemy.level)
+        drop_gold(player.Inventory, enemy)
+        enemy.restore_full_health()
         print("================= Fight has ended =================")
     else:
         print("{red}YOU DIED...{endcolor}".format(red='\033[91m', endcolor='\033[0m'))
