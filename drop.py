@@ -3,9 +3,9 @@ from classes import Food, Armor
 """" Here is a list of possible drops """
 
 '========================= FOOD ======================'
-bread = Food("bread", 2, 10, "bread: costs 2 gold, restores 10 health")
-apple = Food("apple", 1, 6, "apple: costs 1 gold, restores 6 health")
-milk = Food("milk", 3, 15, "milk: costs 3 gold, restores 15 health")
+bread = Food("bread", 3, 10, "bread: costs 3 gold, restores 10 health")
+apple = Food("apple", 2, 5, "apple: costs 2 gold, restores 5 health")
+milk = Food("milk", 4, 15, "milk: costs 4 gold, restores 15 health")
 
 dropped_food = [bread, apple, milk]
 '========================= HELMETS ======================'

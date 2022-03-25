@@ -145,7 +145,7 @@ def shop_actions(player_inventory, shop_instance):
             try:
                 item_index = int(input())
                 try:
-                    print(f'You are going to sell {Player.Inventory.inventory[item_index - 1].name}, are you sure? y/n')
+                    print(f'You are going to sell {Player.Inventory.inventory[item_index - 1].name} for {Player.Inventory.inventory[item_index - 1].price//2} gold, are you sure? y/n')
                     answer = input()
                     if answer == 'y':
                         Shop.sell_item_to_shop(shop_instance, Player.Inventory.inventory[item_index - 1])
@@ -188,6 +188,7 @@ def attack_type():
 def fight(player, enemy):
     print("================= Fight is starting =================")
     k = 2
+    player_armor = Player.PlayerArmor.calculate_total_armor(player.PlayerArmor)
     while player.health > 0 and enemy.health > 0:
         if k % 2 == 0:
             player_strike = random.uniform(min_attack(player.base_attack), max_attack(player.base_attack))
@@ -199,7 +200,6 @@ def fight(player, enemy):
                 player_strike = round(player_strike, 1) * 2
             else:
                 player_strike = round(player_strike, 1)
-            #           print("player_strike = ", player_strike)
             enemy.health = enemy.health - player_strike
             print(f"{player.name} deals {player_strike} damage")
             print(f"{enemy.name}'s health = ", round(enemy.health))
@@ -214,12 +214,17 @@ def fight(player, enemy):
                 enemy_strike = round(enemy_strike, 1) * 2
             else:
                 enemy_strike = round(enemy_strike, 1)
-            player.health = player.health - enemy_strike
-            print(f"{enemy.name} deals {enemy_strike} damage")
-            print(f"{player.name}'s health = ", round(player.health))
-            k += 1
+            print(f"{enemy.name} deals {enemy_strike} damage. {player_armor} damage were blocked by armor")
+            if enemy_strike - player_armor <= 0:
+                enemy_strike = 0
+                print(f"{player.name}'s health = ", round(player.health))
+                k += 1
+            else:
+                player.health = player.health - (enemy_strike - player_armor)
+                print(f"{player.name}'s health = ", round(player.health))
+                k += 1
     if enemy.health <= 0:
-        print(f"{enemy.name} has been defeated")
+        print(f"{enemy.name} has been defeated!")
         drop_items(enemy.level)
         drop_gold(player.Inventory, enemy)
         enemy.restore_full_health()

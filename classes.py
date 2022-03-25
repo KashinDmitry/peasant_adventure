@@ -82,6 +82,15 @@ class Player(Unit):
         def __init__(self):
             pass
 
+        def calculate_total_armor(self):
+            total_armor = 0
+            for key in self.armor_keys:
+                if self.armor[key] == '-':
+                    continue
+                else:
+                    total_armor += self.armor[key].armor
+            return total_armor
+
         def show_player_info(self, player):
             total_armor = 0
             print("Player level:", player.level)
@@ -136,5 +145,5 @@ class Shop():
             print(f"Not enough gold. Player gold is {Player.Inventory.inventory_gold}")
 
     def sell_item_to_shop(self, item):
-        Player.Inventory.inventory_gold += item.price
+        Player.Inventory.inventory_gold += item.price//2
         Player.Inventory.inventory.remove(item)
