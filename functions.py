@@ -165,6 +165,31 @@ def shop_actions(player_inventory, shop_instance):
             continue
 
 
+def town_actions(player, shop):
+    while True:
+        action = ''
+        print("Choose action: 1 - go to outside, 2 - visit warehouse, 3 - visit shop, 4 - restore full health in hospital, 5 - end the game")
+        try:
+            action = int(input())
+        except ValueError:
+            print("Incorrect input. Please enter a number")
+        if action == 1:
+            continue
+            # сдесь будет функция с действиями наружи
+        elif action == 2:
+            continue
+            # сдесь будет функция с действиями склада
+        elif action == 3:
+            shop_actions(player.Inventory.inventory, shop)
+        elif action == 4:
+            player.restore_full_health()
+            print(f"Health has been restored. Player health is {player.health}")
+        elif action == 5:
+            break
+        else:
+            continue
+
+
 def min_attack(base_attack):
     low_attack = base_attack * 0.5
     return low_attack

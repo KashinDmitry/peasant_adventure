@@ -28,13 +28,15 @@ class Player(Unit):
             empty_slots_in_inventory = self.inventory_size - len(self.inventory)
             print("Inventory: [gold:", self.inventory_gold, "]", end=' ')
             print("[items: ", end='')
+            k = 1
             for item in self.inventory:
-                print(f'[{item.name}]', end='')
+                print(f'[{k}.{item.name}]', end='')
+                k += 1
             for i in range(empty_slots_in_inventory):
                 print('[ ]', end='')
             print(']')
 
-        def remove_item(self, item_index):
+        def remove_item_from_inventory(self, item_index):
             self.inventory.pop(item_index - 1)
 
         def inventory_actions(self):
@@ -54,7 +56,7 @@ class Player(Unit):
                     print("Choose item to remove (1, 2, 3...)")
                     try:
                         item_index = int(input())
-                        self.remove_item(item_index)
+                        self.remove_item_from_inventory(item_index)
                         continue
                     except ValueError:
                         print("Incorrect input. Please enter a number")
@@ -66,6 +68,102 @@ class Player(Unit):
                         print("You have chosen item out of list. Please choose correct item")
                         continue
                 elif action == 3:
+                    break
+                else:
+                    continue
+
+    class Warehouse:
+        warehouse = []
+
+        def __init__(self, warehouse_size):
+            self.warehouse_size = warehouse_size
+
+        def show_warehouse(self):
+            empty_slots_in_warehouse = self.warehouse_size - len(self.warehouse)
+            print("[items: ", end='')
+            k = 1
+            for item in self.warehouse:
+                print(f'[{k}.{item.name}]', end='')
+                k += 1
+            for i in range(empty_slots_in_warehouse):
+                print('[ ]', end='')
+            print(']')
+
+        def remove_item_from_warehouse(self, item_index):
+            self.warehouse.pop(item_index - 1)
+
+        def store_item_to_warehouse(self, player_inventory):
+            print("Choose item to put into warehouse (1, 2, 3...)")
+            player_inventory.show_inventory()
+            try:
+                item_index = int(input())
+                if len(self.warehouse) < self.warehouse_size:
+                    print(f"You have put {player_inventory.inventory[item_index-1].name} to warehouse")
+                    self.warehouse.append(player_inventory.inventory[item_index-1])
+                    player_inventory.remove_item_from_inventory(item_index)
+                else:
+                    print("Not enough slots in warehouse")
+            except ValueError:
+                print("ValueError Incorrect input. Please enter a number")
+            except TypeError:
+                print("TypeError Incorrect input. Please enter a number")
+            except IndexError:
+                print("You have chosen item out of list. Please choose correct item")
+
+        def take_item_from_warehouse(self, player_inventory):
+            self.show_warehouse()
+            print("Choose item to take from warehouse (1, 2, 3...)")
+            try:
+                item_index = int(input())
+                inventory_as_list = Player.Inventory.inventory
+                if len(inventory_as_list) < player_inventory.inventory_size:
+                    inventory_as_list.append(self.warehouse[item_index-1])
+                    print(f"You have taken {self.warehouse[item_index-1].name} from warehouse")
+                    self.warehouse.pop(item_index - 1)
+                else:
+                    print("Inventory is full")
+            except ValueError:
+                print("ValueError Incorrect input. Please enter a number")
+            except TypeError:
+                print("TypeError Incorrect input. Please enter a number")
+            except IndexError:
+                print("You have chosen item out of list. Please choose correct item")
+
+        def warehouse_actions(self, player_inventory):
+            while True:
+                action = ''
+                item_index = ''
+                print(
+                    "Choose action: 1 - show warehouse, 2 - store item from inventory to warehouse, 3 - take item from warehouse, 4 - remove X-th item from inventory, 5 - exit warehouse")
+                try:
+                    action = int(input())
+                except ValueError:
+                    print("Incorrect input. Please enter a number")
+                if action == 1:
+                    self.show_warehouse()
+                    continue
+                elif action == 2:
+                    self.store_item_to_warehouse(player_inventory)
+                    continue
+                elif action == 3:
+                    self.take_item_from_warehouse(player_inventory)
+                    continue
+                elif action == 4:
+                    print("Choose item to remove (1, 2, 3...)")
+                    try:
+                        item_index = int(input())
+                        self.remove_item_from_warehouse(item_index)
+                        continue
+                    except ValueError:
+                        print("Incorrect input. Please enter a number")
+                        continue
+                    except TypeError:
+                        print("Incorrect input. Please enter a number")
+                        continue
+                    except IndexError:
+                        print("You have chosen item out of list. Please choose correct item")
+                        continue
+                elif action == 5:
                     break
                 else:
                     continue
