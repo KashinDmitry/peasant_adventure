@@ -49,6 +49,7 @@ class Player(Unit):
                 self.bag = new_bag
                 self.remove_item_from_inventory(self.inventory.index(new_bag))
                 self.inventory.append(temp)
+                print(f"{new_bag.name} is equipped")
 
         def inventory_actions(self, player):
             while True:
@@ -244,7 +245,11 @@ class Food():
         self.description = description
 
     def eat_the_food(self, player):
-        player.restore_health(self.restore_health_amount)
+        if player.health == player.base_health:
+            print("Player health is full. No need to restore it")
+        else:
+            player.restore_health(self.restore_health_amount)
+            print(f"You ate {self.name}. Current health is {player.health}")
 
 
 class Armor():
