@@ -1,4 +1,4 @@
-from classes import Food, Armor
+from classes import Food, Armor, Bag
 
 """" Here is a list of possible drops """
 
@@ -20,7 +20,7 @@ dropped_chests = [leather_chest]
 leather_gloves = Armor("GLOVES", "leather gloves", 1, 'common', 1, 3, "leather gloves: common quality, required level: 1, armor: 1, costs 3 gold")
 
 dropped_gloves = [leather_gloves]
-'========================= GLOVES ======================'
+'========================= PANTS ======================'
 leather_pants = Armor("PANTS", "leather pants", 1, 'common', 2, 5, "leather pants: common quality, required level: 1, armor: 2, costs 5 gold")
 
 dropped_pants = [leather_pants]
@@ -28,9 +28,14 @@ dropped_pants = [leather_pants]
 leather_boots = Armor("BOOTS", "leather boots", 1, 'common', 1, 4, "leather boots: common quality, required level: 1, armor: 1, costs 4 gold")
 
 dropped_boots = [leather_boots]
-'========================= BOOTS ======================'
+'========================= BAGS ======================'
+started_bag = Bag("poor bag", 'common', 2, 5, "poor bag: common quality, capacity: 2, costs 5 gold")
+linen_bag = Bag("linen bag", 'common', 4, 10, "linen bag: common quality, capacity: 3, costs 10 gold")
 
-list_of_all_items = [dropped_food, dropped_helmets, dropped_chests, dropped_gloves, dropped_boots]
+dropped_bags = [linen_bag]
+'========================= BAGS ======================'
+
+list_of_all_items = [dropped_food, dropped_helmets, dropped_chests, dropped_gloves, dropped_boots, dropped_bags]
 
 
 def make_one_list_with_drop(list_of_all_items):

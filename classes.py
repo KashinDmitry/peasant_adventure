@@ -21,8 +21,9 @@ class Player(Unit):
         inventory = []
         inventory_gold = 0
 
-        def __init__(self, inventory_size):
+        def __init__(self, inventory_size, bag):
             self.inventory_size = inventory_size
+            self.bag = bag
 
         def show_inventory(self):
             empty_slots_in_inventory = self.inventory_size - len(self.inventory)
@@ -39,12 +40,22 @@ class Player(Unit):
         def remove_item_from_inventory(self, item_index):
             self.inventory.pop(item_index - 1)
 
-        def inventory_actions(self):
+        def equip_the_bag(self, new_bag):
+            if len(self.inventory) > new_bag.capacity:
+                print(f"New bag have not enough capacity. Current inventory have {len(self.inventory)} items, new bag has {new_bag.capacity} slots")
+            else:
+                temp = self.bag
+                self.inventory_size = new_bag.capacity
+                self.bag = new_bag
+                self.remove_item_from_inventory(self.inventory.index(new_bag))
+                self.inventory.append(temp)
+
+        def inventory_actions(self, player):
             while True:
                 action = ''
                 item_index = ''
                 print(
-                    "Choose action: 1 - show inventory, 2 - remove X-th item from inventory, 3 - close inventory menu")
+                    "Choose action: 1 - show inventory, 2 - use/equip X-th item, 3 - remove X-th item from inventory, 4 - close inventory menu")
                 try:
                     action = int(input())
                 except ValueError:
@@ -53,6 +64,30 @@ class Player(Unit):
                     self.show_inventory()
                     continue
                 elif action == 2:
+                    print("Choose item to use/equip (1, 2, 3...)")
+                    try:
+                        item_index = int(input())
+                        if type(self.inventory[item_index-1]) == Food:
+                            self.inventory[item_index - 1].eat_the_food(player)
+                            self.remove_item_from_inventory(item_index)
+                        elif type(self.inventory[item_index-1]) == Bag:
+                            self.equip_the_bag(self.inventory[item_index - 1])
+                        elif type(self.inventory[item_index-1]) == Armor:
+                            # дописать
+                            pass
+                        else:
+                            print("Unknown item type")
+                        continue
+                    except ValueError:
+                        print("Incorrect input. Please enter a number")
+                        continue
+                    except TypeError:
+                        print("Incorrect input. Please enter a number")
+                        continue
+                    except IndexError:
+                        print("You have chosen item out of list. Please choose correct item")
+                        continue
+                elif action == 3:
                     print("Choose item to remove (1, 2, 3...)")
                     try:
                         item_index = int(input())
@@ -67,7 +102,7 @@ class Player(Unit):
                     except IndexError:
                         print("You have chosen item out of list. Please choose correct item")
                         continue
-                elif action == 3:
+                elif action == 4:
                     break
                 else:
                     continue
@@ -208,6 +243,9 @@ class Food():
         self.restore_health_amount = restore_health_amount
         self.description = description
 
+    def eat_the_food(self, player):
+        player.restore_health(self.restore_health_amount)
+
 
 class Armor():
     def __init__(self, armor_type, name, level, quality, armor, price, description):
@@ -216,6 +254,15 @@ class Armor():
         self.level = level
         self.quality = quality
         self.armor = armor
+        self.price = price
+        self.description = description
+
+
+class Bag():
+    def __init__(self, name, quality, capacity, price, description):
+        self.name = name
+        self.quality = quality
+        self.capacity = capacity
         self.price = price
         self.description = description
 
