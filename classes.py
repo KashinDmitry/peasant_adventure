@@ -47,9 +47,21 @@ class Player(Unit):
                 temp = self.bag
                 self.inventory_size = new_bag.capacity
                 self.bag = new_bag
-                self.remove_item_from_inventory(self.inventory.index(new_bag))
+                self.remove_item_from_inventory(self.inventory.index(new_bag)+1)
                 self.inventory.append(temp)
                 print(f"{new_bag.name} is equipped")
+
+        def equip_the_armor(self, armor_item):
+            if Player.PlayerArmor.armor[armor_item.armor_type] == '-':
+                Player.PlayerArmor.armor[armor_item.armor_type] = armor_item
+                print(f"You have equipped {armor_item.name}")
+                self.remove_item_from_inventory(self.inventory.index(armor_item)+1)
+            else:
+                temp = Player.PlayerArmor.armor[armor_item.armor_type]
+                Player.PlayerArmor.armor[armor_item.armor_type] = armor_item
+                print(f"You have equipped {armor_item.name}")
+                self.remove_item_from_inventory(self.inventory.index(armor_item)+1)
+                self.inventory.append(temp)
 
         def inventory_actions(self, player):
             while True:
@@ -74,8 +86,7 @@ class Player(Unit):
                         elif type(self.inventory[item_index-1]) == Bag:
                             self.equip_the_bag(self.inventory[item_index - 1])
                         elif type(self.inventory[item_index-1]) == Armor:
-                            # дописать
-                            pass
+                            self.equip_the_armor(self.inventory[item_index - 1])
                         else:
                             print("Unknown item type")
                         continue
