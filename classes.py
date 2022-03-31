@@ -181,7 +181,7 @@ class Player(Unit):
                 action = ''
                 item_index = ''
                 print(
-                    "Choose action: 1 - show warehouse, 2 - store item from inventory to warehouse, 3 - take item from warehouse, 4 - remove X-th item from inventory, 5 - exit warehouse")
+                    "Choose action: 1 - show warehouse, 2 - store item from inventory to warehouse, 3 - take item from warehouse, 4 - remove X-th item from warehouse, 5 - exit warehouse")
                 try:
                     action = int(input())
                 except ValueError:
@@ -293,8 +293,8 @@ class Shop():
         pass
 
     def show_goods(self):
-        for item in self.goods:
-            print(f'{self.goods.index(item) + 1}: {item.description}')
+        for count, item in enumerate(self.goods, start=1):
+            print(f'{count}: {item.description}')
 
     def buy_item_from_shop(self, item_index):
         player_gold = Player.Inventory.inventory_gold
@@ -302,6 +302,7 @@ class Shop():
         if player_gold >= item_price:
             Player.Inventory.inventory.append(self.goods[item_index - 1])
             Player.Inventory.inventory_gold -= item_price
+            print(f"You have bought {self.goods[item_index - 1].name}. Gold left: {Player.Inventory.inventory_gold}")
         else:
             print(f"Not enough gold. Player gold is {Player.Inventory.inventory_gold}")
 

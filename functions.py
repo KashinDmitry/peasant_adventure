@@ -145,7 +145,8 @@ def shop_actions(player_inventory, shop_instance):
             try:
                 item_index = int(input())
                 try:
-                    print(f'You are going to sell {Player.Inventory.inventory[item_index - 1].name} for {Player.Inventory.inventory[item_index - 1].price//2} gold, are you sure? y/n')
+                    print(
+                        f'You are going to sell {Player.Inventory.inventory[item_index - 1].name} for {Player.Inventory.inventory[item_index - 1].price // 2} gold, are you sure? y/n')
                     answer = input()
                     if answer == 'y':
                         Shop.sell_item_to_shop(shop_instance, Player.Inventory.inventory[item_index - 1])
@@ -165,33 +166,42 @@ def shop_actions(player_inventory, shop_instance):
             continue
 
 
-def town_actions(player, shop):
+def town_actions(player, player_inventory, shop, warehouse):
     while True:
         action = ''
-        print("Choose action: 1 - go to outside, 2 - visit warehouse, 3 - visit shop, 4 - restore full health in hospital, 5 - end the game")
+        print(
+            "Choose action: 1 - go to outside, 2 - visit warehouse, 3 - visit shop, 4 - restore full health in hospital, 5 - end the game")
         try:
             action = int(input())
         except ValueError:
             print("Incorrect input. Please enter a number")
         if action == 1:
-            continue
-            # сдесь будет функция с действиями наружи
+            explore_the_world()
         elif action == 2:
+            warehouse.warehouse_actions(player_inventory)
             continue
-            # сдесь будет функция с действиями склада
         elif action == 3:
-            shop_actions(player.Inventory.inventory, shop)
+            shop_actions(player_inventory, shop)
         elif action == 4:
             player.restore_full_health()
             print(f"Health has been restored. Player health is {player.health}")
+            continue
         elif action == 5:
-            break
+            print(f'Are you sure you want to end the game? y/n')
+            answer = str(input())
+            if answer == 'y':
+                print('Thanks for the game!')
+                break
+            elif answer == 'n':
+                continue
+            else:
+                print("Incorrect input. Please enter 'y' or 'n'")
         else:
             continue
 
 
 def min_attack(base_attack):
-    low_attack = base_attack * 0.5
+    low_attack = base_attack * 1
     return low_attack
 
 
@@ -204,7 +214,7 @@ def attack_type():
     chance = random.randint(1, 100)
     if chance <= 10:
         return 'miss'
-    elif 10 < chance <= 79:
+    elif 10 < chance <= 89:
         return 'normal'
     else:
         return 'critical'
@@ -217,10 +227,11 @@ def fight(player, enemy):
     while player.health > 0 and enemy.health > 0:
         if k % 2 == 0:
             player_strike = random.uniform(min_attack(player.base_attack), max_attack(player.base_attack))
-            if attack_type() == "miss":
+            attack_scale = attack_type()
+            if attack_scale == "miss":
                 print('{yellow}Вы промахнулись{endcolor}'.format(yellow='\033[93m', endcolor='\033[0m'))
                 player_strike = 0
-            elif attack_type() == "critical":
+            elif attack_scale == "critical":
                 print('{red}КРИТИЧЕСКИЙ УДАР!{endcolor}'.format(red='\033[91m', endcolor='\033[0m'))
                 player_strike = round(player_strike, 1) * 2
             else:
@@ -231,10 +242,11 @@ def fight(player, enemy):
             k += 1
         else:
             enemy_strike = random.uniform(min_attack(enemy.base_attack), max_attack(enemy.base_attack))
-            if attack_type() == "miss":
+            attack_scale = attack_type()
+            if attack_scale == "miss":
                 print('{yellow}Противник промахнулся{endcolor}'.format(yellow='\033[93m', endcolor='\033[0m'))
                 enemy_strike = 0
-            elif attack_type() == "critical":
+            elif attack_scale == "critical":
                 print('{red}КРИТИЧЕСКИЙ УДАР!{endcolor}'.format(red='\033[91m', endcolor='\033[0m'))
                 enemy_strike = round(enemy_strike, 1) * 2
             else:
@@ -256,3 +268,63 @@ def fight(player, enemy):
         print("================= Fight has ended =================")
     else:
         print("{red}YOU DIED...{endcolor}".format(red='\033[91m', endcolor='\033[0m'))
+
+
+def choose_action_in_open_world():
+    action_chance = random.randint(1, 100)
+    if action_chance <= 47:
+        return 'travel'
+    elif 47 < action_chance <= 94:
+        return 'attack'
+    else:
+        return 'find chest'
+
+
+def explore_the_world():
+    direction = ['north', 'south', 'forest', 'river', 'west', 'east', 'fields']
+    actions = []
+    k = 2
+    while True:
+        if k % 2 == 0:
+            for event in range(3):
+                actions.append(choose_action_in_open_world())
+            k += 1
+            print("k after choose_action_in_open_world", k)
+        else:
+            print("actions =", actions)
+            for count, i in enumerate(actions, start=1):
+                if i == 'travel':
+                    print(f'{count}: Travel to {random.choice(direction)}')
+                elif i == 'attack':
+                    pass
+                    print(f'{count}: Attack enemy TODO')   #TODO
+                else:
+                    print(f'{count}: Explore the hidden chest!')
+            print("Choose action (1, 2, 3...) or 4 - return to town")
+            try:
+                action = int(input())
+                if action == 1 or action == 2 or action == 3:
+                    if actions[action-1] == 'travel':
+                        print(f"You are traveling...")
+                        actions.clear()
+                        k += 1
+                    elif actions[action-1] == 'attack':
+                        # TODO
+                        print("you are fighting")
+                        actions.clear()
+                        k += 1
+                    else:
+                        print("open chest!")
+                        actions.clear()
+                        k += 1
+                        # TODO открытие сундука
+                elif action == 4:
+                    print("Returning to town")
+                    actions.clear()
+                    break
+                else:
+                    print("Incorrect input. Please choose number from list")
+            except ValueError:
+                print("Incorrect input. Please enter a number")
+            except IndexError:
+                print("You have chosen item out of list. Please choose correct number")
