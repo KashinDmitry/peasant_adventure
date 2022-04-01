@@ -9,6 +9,7 @@ class TestGame(unittest.TestCase):
         self.player = Player("Dmitry", 1, 100, 100, 10)
         self.player_inventory = Player.Inventory(2, started_bag)
         self.player_warehouse = Player.Warehouse(5)
+        self.player_armor = Player.PlayerArmor()
         self.shop = Shop()
         self.rat = Unit("Rat", 1, 50, 50, 5)
 
@@ -70,6 +71,22 @@ class TestGame(unittest.TestCase):
         self.player_inventory.inventory[0].eat_the_food(self.player)
         assert self.player.health == self.player.base_health, f"Wrong health restoration. Player should have full health = {self.player.base_health}," \
                                                               f"but current health is {self.player.health}"
+
+    def test_equip_armor_and_equip_one_more_time(self):
+        self.player_inventory.inventory.append(iron_helmet)
+        self.player_inventory.inventory.append(leather_helmet)
+        iron_helmet_index = self.player_inventory.inventory.index(iron_helmet)
+        leather_helmet_index = self.player_inventory.inventory.index(leather_helmet)
+        self.player_inventory.equip_the_armor(self.player_inventory.inventory[leather_helmet_index])
+        assert len(self.player_inventory.inventory) == 1, f"Armor wasn't removed from inventory after equipping on empty slot!"
+        assert self.player_armor.calculate_total_armor() == leather_helmet.armor, f"Wrong item was equipped." \
+                                                                                  f"Should be {leather_helmet.name}, not {iron_helmet.name}"
+        self.player_inventory.equip_the_armor(self.player_inventory.inventory[iron_helmet_index])
+        assert self.player_inventory.inventory[0] == leather_helmet, f"{leather_helmet.name} wasn't replaced with {iron_helmet.name}."\
+                                                                     f" In inventory left {self.player_inventory.inventory[0].name}"
+        assert len(self.player_inventory.inventory) == 1, f"Should be only 1 armor part in inventory, not {len(self.player_inventory.inventory)}!"
+        assert self.player_armor.calculate_total_armor() == iron_helmet.armor, f"Wrong item was equipped or wrong total armor calculation." \
+                                                                               f"Should be {iron_helmet.armor} total armor, not {self.player_armor.calculate_total_armor()}"
 
     def tearDown(self):
         self.player_inventory.inventory.clear()

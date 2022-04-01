@@ -2,6 +2,7 @@ import random
 from drop import *
 from classes import Player
 from classes import Shop
+from enemies import *
 
 
 def drop_items(amount):
@@ -53,7 +54,7 @@ def inspect_item(drop):
         print("Incorrect input. Please enter a number")
 
 
-def drop_actions(player_inventory, drop):
+def drop_actions(player_inventory, drop, player):
     while True:
         action = ''
         item_index = ''
@@ -87,8 +88,7 @@ def drop_actions(player_inventory, drop):
                 print("Incorrect input. Please enter a number")
                 continue
             take_item(player_inventory, drop[item_index - 1])
-            if len(
-                    Player.Inventory.inventory) == player_inventory.inventory_size:  # возможно стоит реализовать покрасивее
+            if len(Player.Inventory.inventory) == player_inventory.inventory_size:  # возможно стоит реализовать покрасивее
                 continue
             else:
                 remove_item_from_list(drop, drop[item_index - 1])
@@ -100,7 +100,7 @@ def drop_actions(player_inventory, drop):
                 show_items(drop)
                 continue
         elif action == 4:
-            Player.Inventory.inventory_actions(player_inventory)
+            Player.Inventory.inventory_actions(player_inventory, player)
             print("Item(s) left in your drop:")
             show_items(drop)
             continue
@@ -176,7 +176,7 @@ def town_actions(player, player_inventory, shop, warehouse):
         except ValueError:
             print("Incorrect input. Please enter a number")
         if action == 1:
-            explore_the_world()
+            explore_the_world(player, player_inventory)
         elif action == 2:
             warehouse.warehouse_actions(player_inventory)
             continue
@@ -262,10 +262,11 @@ def fight(player, enemy):
                 k += 1
     if enemy.health <= 0:
         print(f"{enemy.name} has been defeated!")
-        drop_items(enemy.level)
+        print("================= Fight has ended =================")
+        drop_from_enemy = drop_items(enemy.level)
         drop_gold(player.Inventory, enemy)
         enemy.restore_full_health()
-        print("================= Fight has ended =================")
+        return drop_from_enemy
     else:
         print("{red}YOU DIED...{endcolor}".format(red='\033[91m', endcolor='\033[0m'))
 
@@ -280,24 +281,40 @@ def choose_action_in_open_world():
         return 'find chest'
 
 
-def explore_the_world():
+def choose_enemies_to_fight(enemies_scale):
+    enemies = []
+    try:
+        for enemy in all_enemies[enemies_scale]:
+            enemies.append(enemy)
+        for enemy in all_enemies[enemies_scale + 1]:
+            enemies.append(enemy)
+    except KeyError:
+        for enemy in all_enemies[enemies_scale]:
+            enemies.append(enemy)
+    return enemies
+
+
+def explore_the_world(player, player_inventory):
     direction = ['north', 'south', 'forest', 'river', 'west', 'east', 'fields']
     actions = []
+    enemies_scale = 1
+    enemies_list = {}
     k = 2
     while True:
         if k % 2 == 0:
-            for event in range(3):
+            for count, event in enumerate(range(3), start=1):
                 actions.append(choose_action_in_open_world())
+                enemies = choose_enemies_to_fight(enemies_scale)
+                chosen_enemy = random.choice(enemies)
+                enemies_list[count] = chosen_enemy
             k += 1
-            print("k after choose_action_in_open_world", k)
         else:
             print("actions =", actions)
             for count, i in enumerate(actions, start=1):
                 if i == 'travel':
                     print(f'{count}: Travel to {random.choice(direction)}')
                 elif i == 'attack':
-                    pass
-                    print(f'{count}: Attack enemy TODO')   #TODO
+                    print(f'{count}: Attack {enemies_list[count].name}')
                 else:
                     print(f'{count}: Explore the hidden chest!')
             print("Choose action (1, 2, 3...) or 4 - return to town")
@@ -307,20 +324,26 @@ def explore_the_world():
                     if actions[action-1] == 'travel':
                         print(f"You are traveling...")
                         actions.clear()
+                        enemies_list.clear()
                         k += 1
                     elif actions[action-1] == 'attack':
-                        # TODO
-                        print("you are fighting")
+                        print(f"you are fighting {enemies_list[action].name}")
+                        dropped_items = fight(player, enemies_list[action])
+                        drop_actions(player_inventory, dropped_items, player)
                         actions.clear()
+                        enemies_list.clear()
                         k += 1
+                        print("Continue adventure...")
                     else:
                         print("open chest!")
                         actions.clear()
+                        enemies_list.clear()
                         k += 1
                         # TODO открытие сундука
                 elif action == 4:
                     print("Returning to town")
                     actions.clear()
+                    enemies_list.clear()
                     break
                 else:
                     print("Incorrect input. Please choose number from list")
