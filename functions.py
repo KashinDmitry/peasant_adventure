@@ -89,7 +89,7 @@ def drop_actions(player_inventory, drop, player):
                 print("Incorrect input. Please enter a number")
                 continue
             take_item(player_inventory, drop[item_index - 1])
-            if len(Player.Inventory.inventory) == player_inventory.inventory_size:  # возможно стоит реализовать покрасивее
+            if len(Player.Inventory.inventory) == player_inventory.inventory_size:
                 continue
             else:
                 remove_item_from_list(drop, drop[item_index - 1])
@@ -167,12 +167,12 @@ def shop_actions(player_inventory, shop_instance):
             continue
 
 
-def town_actions(player, player_inventory, shop, warehouse):
+def town_actions(player, player_inventory, shop, warehouse, player_armor):
     while True:
         if player.health > 0:
             action = ''
             print(
-                "Choose action: 1 - go to outside, 2 - visit warehouse, 3 - visit shop, 4 - restore full health in hospital, 5 - end the game")
+                "Choose action: 1 - go to outside, 2- open inventory, 3 - show player info, 4 - visit warehouse, 5 - visit shop, 6 - restore full health in hospital, 7 - end the game")
             try:
                 action = int(input())
             except ValueError:
@@ -180,15 +180,20 @@ def town_actions(player, player_inventory, shop, warehouse):
             if action == 1:
                 explore_the_world(player, player_inventory)
             elif action == 2:
+                Player.Inventory.inventory_actions(player_inventory, player)
+            elif action == 3:
+                player_armor.show_player_info(player)
+                continue
+            elif action == 4:
                 warehouse.warehouse_actions(player_inventory)
                 continue
-            elif action == 3:
+            elif action == 5:
                 shop_actions(player_inventory, shop)
-            elif action == 4:
+            elif action == 6:
                 player.restore_full_health()
                 print(f"Health has been restored. Player health is {player.health}")
                 continue
-            elif action == 5:
+            elif action == 7:
                 print(f'Are you sure you want to end the game? y/n')
                 answer = str(input())
                 if answer == 'y':
@@ -268,6 +273,7 @@ def fight(player, enemy):
     if enemy.health <= 0:
         print(f"{enemy.name} has been defeated!")
         print("================= Fight has ended =================")
+        player.get_exp(enemy)
         drop_from_enemy = drop_items(enemy.level)
         drop_gold(player.Inventory, enemy)
         enemy.restore_full_health()
@@ -325,8 +331,6 @@ def explore_the_world(player, player_inventory):
     k = 2
     while True:
         enemies_scale = 1 + enemies_scale_counter // 5
-        print("enemies_scale_counter = ", enemies_scale_counter)
-        print("enemies_scale = ", enemies_scale)
         if k % 2 == 0:
             for count, event in enumerate(range(3), start=1):
                 actions.append(choose_action_in_open_world())
@@ -335,12 +339,11 @@ def explore_the_world(player, player_inventory):
                 enemies_list[count] = chosen_enemy
             k += 1
         else:
-            print("actions =", actions)
             for count, i in enumerate(actions, start=1):
                 if i == 'travel':
                     print(f'{count}: Travel to {random.choice(direction)}')
                 elif i == 'attack':
-                    print(f'{count}: Attack {enemies_list[count].name}')
+                    print(f'{count}: Attack {enemies_list[count].name} (level {enemies_list[count].level})')
                 else:
                     print(f'{count}: Explore the hidden chest!')
             print("Choose action (1, 2, 3...) or 4 - return to town")

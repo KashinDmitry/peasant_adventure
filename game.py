@@ -11,7 +11,7 @@ player_armor = Player.PlayerArmor()
 shop = Shop()
 
 #player_inventory.inventory.append(started_bag)
-player_inventory.inventory.append(old_key)
+player_inventory.inventory.append(iron_helmet)
 #player_inventory.inventory.append(leather_helmet)
 #player_warehouse.warehouse.append(apple)
 #player_armor.armor["HELMET"] = leather_helmet
@@ -20,7 +20,7 @@ player_inventory.inventory.append(old_key)
 #fight(player, rat)
 #fight(player, rat)
 
-town_actions(player, player_inventory, shop, player_warehouse)
+town_actions(player, player_inventory, shop, player_warehouse, player_armor)
 
 #dropped_items = drop_items(rat.level)
 

@@ -17,6 +17,17 @@ class Unit:
 
 
 class Player(Unit):
+    exp_for_new_level = 0
+
+    def get_exp(self, enemy):
+        self.exp_for_new_level += enemy.level * 2
+        if self.exp_for_new_level >= self.level * 2:
+            self.exp_for_new_level = 0
+            self.level += 1
+            print(f"You have reached level {self.level}!")
+        else:
+            print(f"Player exp: { self.exp_for_new_level}/{self.level * 10}")
+
     class Inventory:
         inventory = []
         inventory_gold = 0
@@ -38,6 +49,7 @@ class Player(Unit):
             print(']')
 
         def remove_item_from_inventory(self, item_index):
+            print(f"{self.inventory[item_index - 1].name} has been removed from inventory")
             self.inventory.pop(item_index - 1)
 
         def equip_the_bag(self, new_bag):
@@ -51,17 +63,21 @@ class Player(Unit):
                 self.inventory.append(temp)
                 print(f"{new_bag.name} is equipped")
 
-        def equip_the_armor(self, armor_item):
-            if Player.PlayerArmor.armor[armor_item.armor_type] == '-':
-                Player.PlayerArmor.armor[armor_item.armor_type] = armor_item
-                print(f"You have equipped {armor_item.name}")
-                self.remove_item_from_inventory(self.inventory.index(armor_item)+1)
+        def equip_the_armor(self, armor_item, player):
+            if armor_item.level > player.level:
+                print(f"Player level is too low to equip this armor. Need level {armor_item.level},"
+                      f" current player level is {player.level}")
             else:
-                temp = Player.PlayerArmor.armor[armor_item.armor_type]
-                Player.PlayerArmor.armor[armor_item.armor_type] = armor_item
-                print(f"You have equipped {armor_item.name}")
-                self.remove_item_from_inventory(self.inventory.index(armor_item)+1)
-                self.inventory.append(temp)
+                if Player.PlayerArmor.armor[armor_item.armor_type] == '-':
+                    Player.PlayerArmor.armor[armor_item.armor_type] = armor_item
+                    print(f"You have equipped {armor_item.name}")
+                    self.remove_item_from_inventory(self.inventory.index(armor_item)+1)
+                else:
+                    temp = Player.PlayerArmor.armor[armor_item.armor_type]
+                    Player.PlayerArmor.armor[armor_item.armor_type] = armor_item
+                    print(f"You have equipped {armor_item.name}")
+                    self.remove_item_from_inventory(self.inventory.index(armor_item)+1)
+                    self.inventory.append(temp)
 
         def inventory_actions(self, player):
             while True:
@@ -86,7 +102,7 @@ class Player(Unit):
                         elif type(self.inventory[item_index-1]) == Bag:
                             self.equip_the_bag(self.inventory[item_index - 1])
                         elif type(self.inventory[item_index-1]) == Armor:
-                            self.equip_the_armor(self.inventory[item_index - 1])
+                            self.equip_the_armor(self.inventory[item_index - 1], player)
                         else:
                             print("Unknown item type")
                         continue
@@ -238,7 +254,9 @@ class Player(Unit):
 
         def show_player_info(self, player):
             total_armor = 0
-            print("Player level:", player.level)
+            print("Name:", player.name)
+            print("Level:", player.level)
+            print("Health:", player.health)
             for key in self.armor_keys:
                 if self.armor[key] == '-':
                     continue
