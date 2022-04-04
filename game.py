@@ -11,7 +11,7 @@ player_armor = Player.PlayerArmor()
 shop = Shop()
 
 #player_inventory.inventory.append(started_bag)
-player_inventory.inventory.append(iron_helmet)
+player_inventory.inventory.append(old_key)
 #player_inventory.inventory.append(leather_helmet)
 #player_warehouse.warehouse.append(apple)
 #player_armor.armor["HELMET"] = leather_helmet
@@ -30,7 +30,7 @@ town_actions(player, player_inventory, shop, player_warehouse)
 
 #player_inventory.inventory_actions(player)
 
-player_inventory.show_inventory()
+#player_inventory.show_inventory()
 #player_inventory.inventory_actions(player)
 #player_inventory.equip_the_armor(player_inventory.inventory[1])
 #bread.eat_the_food(player)
@@ -49,4 +49,4 @@ player_inventory.show_inventory()
 
 #shop.sell_item_to_shop(player_inventory.inventory[0])
 #player_armor.show_player_info(player)
-#player_inventory.show_inventory()
+player_inventory.show_inventory()

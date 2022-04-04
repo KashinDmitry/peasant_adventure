@@ -1,4 +1,5 @@
 import random
+from time import sleep
 from drop import *
 from classes import Player
 from classes import Shop
@@ -168,36 +169,40 @@ def shop_actions(player_inventory, shop_instance):
 
 def town_actions(player, player_inventory, shop, warehouse):
     while True:
-        action = ''
-        print(
-            "Choose action: 1 - go to outside, 2 - visit warehouse, 3 - visit shop, 4 - restore full health in hospital, 5 - end the game")
-        try:
-            action = int(input())
-        except ValueError:
-            print("Incorrect input. Please enter a number")
-        if action == 1:
-            explore_the_world(player, player_inventory)
-        elif action == 2:
-            warehouse.warehouse_actions(player_inventory)
-            continue
-        elif action == 3:
-            shop_actions(player_inventory, shop)
-        elif action == 4:
-            player.restore_full_health()
-            print(f"Health has been restored. Player health is {player.health}")
-            continue
-        elif action == 5:
-            print(f'Are you sure you want to end the game? y/n')
-            answer = str(input())
-            if answer == 'y':
-                print('Thanks for the game!')
-                break
-            elif answer == 'n':
+        if player.health > 0:
+            action = ''
+            print(
+                "Choose action: 1 - go to outside, 2 - visit warehouse, 3 - visit shop, 4 - restore full health in hospital, 5 - end the game")
+            try:
+                action = int(input())
+            except ValueError:
+                print("Incorrect input. Please enter a number")
+            if action == 1:
+                explore_the_world(player, player_inventory)
+            elif action == 2:
+                warehouse.warehouse_actions(player_inventory)
                 continue
+            elif action == 3:
+                shop_actions(player_inventory, shop)
+            elif action == 4:
+                player.restore_full_health()
+                print(f"Health has been restored. Player health is {player.health}")
+                continue
+            elif action == 5:
+                print(f'Are you sure you want to end the game? y/n')
+                answer = str(input())
+                if answer == 'y':
+                    print('Thanks for the game!')
+                    break
+                elif answer == 'n':
+                    continue
+                else:
+                    print("Incorrect input. Please enter 'y' or 'n'")
             else:
-                print("Incorrect input. Please enter 'y' or 'n'")
+                continue
         else:
-            continue
+            print('Thanks for the game!')
+            break
 
 
 def min_attack(base_attack):
@@ -266,9 +271,14 @@ def fight(player, enemy):
         drop_from_enemy = drop_items(enemy.level)
         drop_gold(player.Inventory, enemy)
         enemy.restore_full_health()
-        return drop_from_enemy
+        player_is_dead = False
+        return player_is_dead, drop_from_enemy
     else:
         print("{red}YOU DIED...{endcolor}".format(red='\033[91m', endcolor='\033[0m'))
+        sleep(3)
+        drop = []
+        player_is_dead = True
+        return player_is_dead, drop
 
 
 def choose_action_in_open_world():
@@ -289,18 +299,34 @@ def choose_enemies_to_fight(enemies_scale):
         for enemy in all_enemies[enemies_scale + 1]:
             enemies.append(enemy)
     except KeyError:
-        for enemy in all_enemies[enemies_scale]:
+        for enemy in all_enemies[len(all_enemies)]:
             enemies.append(enemy)
     return enemies
+
+
+def open_chest(loot_scale, player_inventory, player):
+    if player_inventory.inventory.count(old_key) == 0:
+        print("You don't have a key to open the chest")
+    else:
+        gold_in_the_chest = 7 * loot_scale
+        player_inventory.inventory_gold += gold_in_the_chest
+        print(f"You have found {gold_in_the_chest} gold")
+        key_index = player_inventory.inventory.index(old_key)
+        player_inventory.remove_item_from_inventory(key_index + 1)
+        drop = drop_items(loot_scale)
+        drop_actions(player_inventory, drop, player)
 
 
 def explore_the_world(player, player_inventory):
     direction = ['north', 'south', 'forest', 'river', 'west', 'east', 'fields']
     actions = []
-    enemies_scale = 1
+    enemies_scale_counter = 0
     enemies_list = {}
     k = 2
     while True:
+        enemies_scale = 1 + enemies_scale_counter // 5
+        print("enemies_scale_counter = ", enemies_scale_counter)
+        print("enemies_scale = ", enemies_scale)
         if k % 2 == 0:
             for count, event in enumerate(range(3), start=1):
                 actions.append(choose_action_in_open_world())
@@ -323,23 +349,28 @@ def explore_the_world(player, player_inventory):
                 if action == 1 or action == 2 or action == 3:
                     if actions[action-1] == 'travel':
                         print(f"You are traveling...")
+                        enemies_scale_counter += 1
                         actions.clear()
                         enemies_list.clear()
                         k += 1
                     elif actions[action-1] == 'attack':
                         print(f"you are fighting {enemies_list[action].name}")
-                        dropped_items = fight(player, enemies_list[action])
-                        drop_actions(player_inventory, dropped_items, player)
-                        actions.clear()
-                        enemies_list.clear()
-                        k += 1
-                        print("Continue adventure...")
+                        player_is_dead, dropped_items = fight(player, enemies_list[action])
+                        if not player_is_dead:
+                            drop_actions(player_inventory, dropped_items, player)
+                            actions.clear()
+                            enemies_list.clear()
+                            k += 1
+                            print("Continue adventure...")
+                        else:
+                            break
                     else:
-                        print("open chest!")
+                        print("You are going to open the chest!")
+                        open_chest(enemies_scale, player_inventory, player)
+                        print("Continue adventure...")
                         actions.clear()
                         enemies_list.clear()
                         k += 1
-                        # TODO открытие сундука
                 elif action == 4:
                     print("Returning to town")
                     actions.clear()

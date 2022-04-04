@@ -1,4 +1,9 @@
-from classes import Food, Armor, Bag
+from classes import Food, Armor, Bag, Key
+
+'========================= Not for drop ======================'
+old_key = Key("Old key", 15, "Old key: costs 15 gold, required to open founded chests")
+'========================= Not for drop ======================'
+
 
 """" Here is a list of possible drops """
 
@@ -35,9 +40,10 @@ iron_boots = Armor("BOOTS", "iron boots", 2, 'common', 2, 9, "iron boots: common
 dropped_boots = [leather_boots, iron_boots]
 '========================= BAGS ======================'
 started_bag = Bag("poor bag", 'common', 2, 5, "poor bag: common quality, capacity: 2, costs 5 gold")
-linen_bag = Bag("linen bag", 'common', 4, 10, "linen bag: common quality, capacity: 3, costs 10 gold")
+linen_bag = Bag("linen bag", 'common', 4, 10, "linen bag: common quality, capacity: 4, costs 10 gold")
+silk_bag = Bag("silk bag", 'rare', 6, 20, "silk bag: rare quality, capacity: 6, costs 20 gold")
 
-dropped_bags = [linen_bag]
+dropped_bags = [linen_bag, silk_bag]
 '========================= BAGS ======================'
 
 list_of_all_items = [dropped_food, dropped_helmets, dropped_chests, dropped_gloves, dropped_boots, dropped_bags]
