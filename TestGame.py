@@ -72,16 +72,21 @@ class TestGame(unittest.TestCase):
         assert self.player.health == self.player.base_health, f"Wrong health restoration. Player should have full health = {self.player.base_health}," \
                                                               f"but current health is {self.player.health}"
 
+    def test_a_equip_armor_with_not_enough_level(self):
+        self.player_inventory.equip_the_armor(iron_helmet, self.player)
+        assert self.player_armor.calculate_total_armor() == 0, f"You equipped armor level {iron_helmet.level} with player level {self.player.level}"
+
     def test_equip_armor_and_equip_one_more_time(self):
+        self.player.level = 2
         self.player_inventory.inventory.append(iron_helmet)
         self.player_inventory.inventory.append(leather_helmet)
         iron_helmet_index = self.player_inventory.inventory.index(iron_helmet)
         leather_helmet_index = self.player_inventory.inventory.index(leather_helmet)
-        self.player_inventory.equip_the_armor(self.player_inventory.inventory[leather_helmet_index])
+        self.player_inventory.equip_the_armor(self.player_inventory.inventory[leather_helmet_index], self.player)
         assert len(self.player_inventory.inventory) == 1, f"Armor wasn't removed from inventory after equipping on empty slot!"
         assert self.player_armor.calculate_total_armor() == leather_helmet.armor, f"Wrong item was equipped." \
                                                                                   f"Should be {leather_helmet.name}, not {iron_helmet.name}"
-        self.player_inventory.equip_the_armor(self.player_inventory.inventory[iron_helmet_index])
+        self.player_inventory.equip_the_armor(self.player_inventory.inventory[iron_helmet_index], self.player)
         assert self.player_inventory.inventory[0] == leather_helmet, f"{leather_helmet.name} wasn't replaced with {iron_helmet.name}."\
                                                                      f" In inventory left {self.player_inventory.inventory[0].name}"
         assert len(self.player_inventory.inventory) == 1, f"Should be only 1 armor part in inventory, not {len(self.player_inventory.inventory)}!"
@@ -91,6 +96,7 @@ class TestGame(unittest.TestCase):
     def tearDown(self):
         self.player_inventory.inventory.clear()
         self.player_warehouse.warehouse.clear()
+        self.player.level = 1
 
 
 # Executing the tests in the above test case class

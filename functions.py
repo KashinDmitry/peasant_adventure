@@ -197,6 +197,8 @@ def town_actions(player, player_inventory, shop, warehouse, player_armor):
                 print(f'Are you sure you want to end the game? y/n')
                 answer = str(input())
                 if answer == 'y':
+                    Player.global_game_score += Player.Inventory.inventory_gold // 2
+                    print("Your final score is", Player.global_game_score)
                     print('Thanks for the game!')
                     break
                 elif answer == 'n':
@@ -276,12 +278,15 @@ def fight(player, enemy):
         player.get_exp(enemy)
         drop_from_enemy = drop_items(enemy.level)
         drop_gold(player.Inventory, enemy)
+        Player.global_game_score += enemy.level * 2
         enemy.restore_full_health()
         player_is_dead = False
         return player_is_dead, drop_from_enemy
     else:
         print("{red}YOU DIED...{endcolor}".format(red='\033[91m', endcolor='\033[0m'))
         sleep(3)
+        Player.global_game_score += Player.Inventory.inventory_gold // 2
+        print("Your final score is ", Player.global_game_score)
         drop = []
         player_is_dead = True
         return player_is_dead, drop
@@ -376,9 +381,21 @@ def explore_the_world(player, player_inventory):
                         k += 1
                 elif action == 4:
                     print("Returning to town")
-                    actions.clear()
-                    enemies_list.clear()
-                    break
+                    player_was_ambushed_chance = random.randint(enemies_scale, 20)
+                    if player_was_ambushed_chance == 20:
+                        attacked_by = random.choice(random.choice(all_enemies))
+                        print(f"You have been ambushed by {attacked_by.name} (level {attacked_by.level}) on the back road to town!")
+                        sleep(4)
+                        player_is_dead, dropped_items = fight(player, attacked_by)
+                        if not player_is_dead:
+                            drop_actions(player_inventory, dropped_items, player)
+                            break
+                        else:
+                            break
+                    else:
+                        actions.clear()
+                        enemies_list.clear()
+                        break
                 else:
                     print("Incorrect input. Please choose number from list")
             except ValueError:

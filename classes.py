@@ -18,10 +18,11 @@ class Unit:
 
 class Player(Unit):
     exp_for_new_level = 0
+    global_game_score = 0
 
     def get_exp(self, enemy):
         self.exp_for_new_level += enemy.level * 2
-        if self.exp_for_new_level >= self.level * 2:
+        if self.exp_for_new_level >= self.level * 10:
             self.exp_for_new_level = 0
             self.level += 1
             print(f"You have reached level {self.level}!")
@@ -257,6 +258,7 @@ class Player(Unit):
             print("Name:", player.name)
             print("Level:", player.level)
             print("Health:", player.health)
+            print("Global score (not final):", player.global_game_score)
             for key in self.armor_keys:
                 if self.armor[key] == '-':
                     continue
