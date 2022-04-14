@@ -251,18 +251,20 @@ def fight(player, enemy):
     print("================= Fight is starting =================")
     k = 2
     player_armor = Player.PlayerArmor.calculate_total_armor(player.PlayerArmor)
+    additional_damage_by_weapon = Player.PlayerArmor.weapon.damage
     while player.health > 0 and enemy.health > 0:
         if k % 2 == 0:
             player_strike = random.uniform(min_attack(player.base_attack), max_attack(player.base_attack))
+            player_strike += additional_damage_by_weapon
             attack_scale = attack_type()
             if attack_scale == "miss":
                 print('{yellow}Вы промахнулись{endcolor}'.format(yellow='\033[93m', endcolor='\033[0m'))
                 player_strike = 0
             elif attack_scale == "critical":
                 print('{red}КРИТИЧЕСКИЙ УДАР!{endcolor}'.format(red='\033[91m', endcolor='\033[0m'))
-                player_strike = round(player_strike, 1) * 2
+                player_strike = round(player_strike, 0) * 2
             else:
-                player_strike = round(player_strike, 1)
+                player_strike = round(player_strike, 0)
             enemy.health = enemy.health - player_strike
             print(f"{player.name} deals {player_strike} damage")
             print(f"{enemy.name}'s health = ", round(enemy.health))
@@ -275,9 +277,9 @@ def fight(player, enemy):
                 enemy_strike = 0
             elif attack_scale == "critical":
                 print('{red}КРИТИЧЕСКИЙ УДАР!{endcolor}'.format(red='\033[91m', endcolor='\033[0m'))
-                enemy_strike = round(enemy_strike, 1) * 2
+                enemy_strike = round(enemy_strike, 0) * 2
             else:
-                enemy_strike = round(enemy_strike, 1)
+                enemy_strike = round(enemy_strike, 0)
             print(f"{enemy.name} deals {enemy_strike} damage. {player_armor} damage were blocked by armor")
             if enemy_strike - player_armor <= 0:
                 enemy_strike = 0

@@ -27,7 +27,7 @@ class Player(Unit):
             self.level += 1
             print(f"You have reached level {self.level}!")
         else:
-            print(f"Player exp: { self.exp_for_new_level}/{self.level * 10}")
+            print(f"Player exp: {self.exp_for_new_level}/{self.level * 10}")
 
     class Inventory:
         inventory = []
@@ -80,10 +80,22 @@ class Player(Unit):
                     self.remove_item_from_inventory(self.inventory.index(armor_item)+1)
                     self.inventory.append(temp)
 
+        def equip_the_weapon(self, weapon_item, player):
+            print("weapon_item = ", weapon_item.name)
+            if weapon_item.level > player.level:
+                print(f"Player level is too low to equip this weapon. Need level {weapon_item.level},"
+                      f" current player level is {player.level}")
+            else:
+                temp = Player.PlayerArmor.weapon
+                Player.PlayerArmor.weapon = weapon_item
+                print(f"You have equipped {weapon_item.name}")
+                self.remove_item_from_inventory(self.inventory.index(weapon_item)+1)
+                self.inventory.append(temp)
+
         def inventory_actions(self, player):
             while True:
                 action = ''
-                item_index = ''
+                #item_index = ''
                 print(
                     "Choose action: 1 - show inventory, 2 - use/equip X-th item, 3 - remove X-th item from inventory, 4 - close inventory menu")
                 try:
@@ -104,6 +116,8 @@ class Player(Unit):
                             self.equip_the_bag(self.inventory[item_index - 1])
                         elif type(self.inventory[item_index-1]) == Armor:
                             self.equip_the_armor(self.inventory[item_index - 1], player)
+                        elif type(self.inventory[item_index-1]) == Weapon:
+                            self.equip_the_weapon(self.inventory[item_index - 1], player)
                         else:
                             print("Unknown item type")
                         continue
@@ -238,6 +252,7 @@ class Player(Unit):
                  'GLOVES': '-',
                  'PANTS': '-',
                  'BOOTS': '-'}
+        weapon = '-'
 
         armor_keys = armor.keys()
 
@@ -266,6 +281,7 @@ class Player(Unit):
                     print(f"{key}: {self.armor[key].name} -", "armor:", self.armor[key].armor)
                     total_armor += self.armor[key].armor
             print(f"Total armor: {total_armor}")
+            print(f"Weapon: {self.weapon.name} - damage: {self.weapon.damage}")
 
 
 class Food():
@@ -290,6 +306,17 @@ class Armor():
         self.level = level
         self.quality = quality
         self.armor = armor
+        self.price = price
+        self.description = description
+
+
+class Weapon():
+    def __init__(self, weapon_type, name, level, quality, damage, price, description):
+        self.weapon_type = weapon_type
+        self.name = name
+        self.level = level
+        self.quality = quality
+        self.damage = damage
         self.price = price
         self.description = description
 

@@ -1,4 +1,4 @@
-from classes import Food, Armor, Bag, Key
+from classes import Food, Armor, Bag, Key, Weapon
 
 '========================= Not for drop ======================'
 old_key = Key("Old key", 15, "Old key: costs 15 gold, required to open founded chests")
@@ -44,9 +44,14 @@ linen_bag = Bag("linen bag", 'common', 4, 10, "linen bag: common quality, capaci
 silk_bag = Bag("silk bag", 'rare', 6, 20, "silk bag: rare quality, capacity: 6, costs 20 gold")
 
 dropped_bags = [linen_bag, silk_bag]
-'========================= BAGS ======================'
+'========================= Weapon ======================'
+started_sword = Weapon("WEAPON", "Rusted sword", 1, 'common', 1, 5, "Rusted sword: common quality, required level: 1, damage: 1, costs 5 gold")
+sword = Weapon("WEAPON", "Sword", 1, 'common', 3, 14, "Sword: common quality, required level: 1, damage: 3, costs 14 gold")
 
-list_of_all_items = [dropped_food, dropped_helmets, dropped_chests, dropped_gloves, dropped_boots, dropped_bags]
+dropped_weapons = [sword]
+'========================= Weapon ======================'
+
+list_of_all_items = [dropped_food, dropped_helmets, dropped_chests, dropped_gloves, dropped_boots, dropped_bags, dropped_weapons]
 
 
 def make_one_list_with_drop(list_of_all_items):

@@ -10,6 +10,7 @@ class TestGame(unittest.TestCase):
         self.player_inventory = Player.Inventory(2, started_bag)
         self.player_warehouse = Player.Warehouse(5)
         self.player_armor = Player.PlayerArmor()
+        Player.PlayerArmor.weapon = started_sword
         self.shop = Shop()
         self.rat = Unit("Rat", 1, 50, 50, 5)
 
@@ -71,6 +72,12 @@ class TestGame(unittest.TestCase):
         self.player_inventory.inventory[0].eat_the_food(self.player)
         assert self.player.health == self.player.base_health, f"Wrong health restoration. Player should have full health = {self.player.base_health}," \
                                                               f"but current health is {self.player.health}"
+
+    def test_equip_weapon_and_check(self):
+        self.player_inventory.inventory.append(sword)
+        self.player_inventory.equip_the_weapon(sword, self.player)
+        assert self.player_armor.weapon.damage == sword.damage, f"Wrong equipped weapon damage. Should be {sword.damage}," \
+                                                                f"got {self.player_armor.weapon.damage} instead"
 
     def test_a_equip_armor_with_not_enough_level(self):
         self.player_inventory.equip_the_armor(iron_helmet, self.player)
