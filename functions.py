@@ -1,4 +1,5 @@
 import random
+from google_sheets_functions import *
 from time import sleep
 from drop import *
 from classes import Player
@@ -21,6 +22,22 @@ def drop_gold(player_inventory, defeated_enemy):
     dropped_gold = round(random.uniform(defeated_enemy.level, defeated_enemy.level + 2))
     player_inventory.inventory_gold += dropped_gold
     print(f"You have found {dropped_gold} gold")
+
+
+def handle_player_final_score(player):
+    Player.global_game_score += Player.Inventory.inventory_gold // 2
+    print("Your final score is", Player.global_game_score)
+    insert_player_result_to_table(player)
+    sort_score_table()
+    values = get_score_results_from_table("Scores!A2:B11")
+    print("Top 10 players:")
+    for count, pair in enumerate(values, start=1):
+        print(f"{count}. {pair[0]}", end=': ')
+        print(pair[1])
+    print('Thanks for the game!')
+    all_values = get_score_results_from_table("Scores!A2:B40")
+    if len(all_values) > 30:
+        delete_unused_scores()
 
 
 def show_items(items_list):
@@ -172,7 +189,7 @@ def town_actions(player, player_inventory, shop, warehouse, player_armor):
         if player.health > 0:
             action = ''
             print(
-                "Choose action: 1 - go to outside, 2- open inventory, 3 - show player info, 4 - visit warehouse, 5 - visit shop, 6 - restore full health in hospital, 7 - end the game")
+                "Choose action: 1 - explore the world outside, 2- open inventory, 3 - show player info, 4 - visit warehouse, 5 - visit shop, 6 - restore full health in hospital, 7 - end the game")
             try:
                 action = int(input())
             except ValueError:
@@ -197,9 +214,7 @@ def town_actions(player, player_inventory, shop, warehouse, player_armor):
                 print(f'Are you sure you want to end the game? y/n')
                 answer = str(input())
                 if answer == 'y':
-                    Player.global_game_score += Player.Inventory.inventory_gold // 2
-                    print("Your final score is", Player.global_game_score)
-                    print('Thanks for the game!')
+                    handle_player_final_score(player)
                     break
                 elif answer == 'n':
                     continue
@@ -285,8 +300,7 @@ def fight(player, enemy):
     else:
         print("{red}YOU DIED...{endcolor}".format(red='\033[91m', endcolor='\033[0m'))
         sleep(3)
-        Player.global_game_score += Player.Inventory.inventory_gold // 2
-        print("Your final score is ", Player.global_game_score)
+        handle_player_final_score(player)
         drop = []
         player_is_dead = True
         return player_is_dead, drop
@@ -329,7 +343,7 @@ def open_chest(loot_scale, player_inventory, player):
 
 
 def explore_the_world(player, player_inventory):
-    direction = ['north', 'south', 'forest', 'river', 'west', 'east', 'fields']
+    direction = ['north', 'south', 'forest', 'river', 'west', 'east', 'fields', 'swamp', 'hill']
     actions = []
     enemies_scale_counter = 0
     enemies_list = {}

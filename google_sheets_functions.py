@@ -7,18 +7,17 @@ from classes import Player
 SERVICE_ACCOUNT_FILE = 'keys.json'
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
-#creds = None
 creds = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 SAMPLE_SPREADSHEET_ID = '1-yN8OxNsgkXNNV-bgshAR2Oi4254oJGO71_mVPlOjUQ'
 service = build('sheets', 'v4', credentials=creds)
 
 
-def get_score_results_from_table():
+def get_score_results_from_table(range):
+    # range example "Scores!A2:B11"
     sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID, range="Scores!A2:B11").execute()
+    result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID, range=range).execute()
     values = result.get('values', [])
-    print(values)
     return values
 
 
@@ -32,8 +31,6 @@ def insert_player_result_to_table(player):
         ]
     }
     request = service.spreadsheets().values().append(spreadsheetId=SAMPLE_SPREADSHEET_ID, range=range_, valueInputOption=value_input_option, insertDataOption=insert_data_option, body=value_range_body).execute()
-    response = request.execute()
-    print(response)
 
 
 def sort_score_table():
