@@ -2,17 +2,17 @@ import random
 from google_sheets_functions import *
 from time import sleep
 from drop import *
-from classes import Player
-from classes import Shop
+from classes import Player, Shop
 from enemies import *
 
 
-def drop_items(amount):
-    items_for_drop = make_one_list_with_drop(list_of_all_items)
-    print(f"You have found {amount} item(s):")
+def drop_items(enemy_level, dropped_gold):
+    amount = random.randint(1, 2)
+    scaled_items_for_drop = choose_items_for_drop(enemy_level)
+    print(f"You have found {dropped_gold} gold and {amount} item(s):")
     drop = []
     for i in range(amount):
-        random_item = random.choice(items_for_drop)
+        random_item = random.choice(scaled_items_for_drop)
         print(i + 1, random_item.name)
         drop.append(random_item)
     return drop
@@ -21,7 +21,17 @@ def drop_items(amount):
 def drop_gold(player_inventory, defeated_enemy):
     dropped_gold = round(random.uniform(defeated_enemy.level, defeated_enemy.level + 2))
     player_inventory.inventory_gold += dropped_gold
-    print(f"You have found {dropped_gold} gold")
+    return dropped_gold
+    #print(f"You have found {dropped_gold} gold")
+
+
+def choose_items_for_drop(enemy_level):
+    all_items_for_drop = make_one_list_with_drop(list_of_all_items)
+    scaled_items_for_drop = []
+    for item in all_items_for_drop:
+        if enemy_level - 1 <= item.level <= enemy_level:
+            scaled_items_for_drop.append(item)
+    return scaled_items_for_drop
 
 
 def handle_player_final_score(player):
@@ -293,8 +303,8 @@ def fight(player, enemy):
         print(f"{enemy.name} has been defeated!")
         print("================= Fight has ended =================")
         player.get_exp(enemy)
-        drop_from_enemy = drop_items(enemy.level)
-        drop_gold(player.Inventory, enemy)
+        dropped_gold = drop_gold(player.Inventory, enemy)
+        drop_from_enemy = drop_items(enemy.level, dropped_gold)
         Player.global_game_score += enemy.level * 2
         enemy.restore_full_health()
         player_is_dead = False
@@ -337,10 +347,9 @@ def open_chest(loot_scale, player_inventory, player):
     else:
         gold_in_the_chest = 7 * loot_scale
         player_inventory.inventory_gold += gold_in_the_chest
-        print(f"You have found {gold_in_the_chest} gold")
         key_index = player_inventory.inventory.index(old_key)
         player_inventory.remove_item_from_inventory(key_index + 1)
-        drop = drop_items(loot_scale)
+        drop = drop_items(loot_scale, gold_in_the_chest)
         drop_actions(player_inventory, drop, player)
 
 

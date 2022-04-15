@@ -285,8 +285,9 @@ class Player(Unit):
 
 
 class Food():
-    def __init__(self, name, price, restore_health_amount, description):
+    def __init__(self, name, level, price, restore_health_amount, description):
         self.name = name
+        self.level = level
         self.price = price
         self.restore_health_amount = restore_health_amount
         self.description = description
@@ -322,8 +323,9 @@ class Weapon():
 
 
 class Bag():
-    def __init__(self, name, quality, capacity, price, description):
+    def __init__(self, name, level, quality, capacity, price, description):
         self.name = name
+        self.level = level
         self.quality = quality
         self.capacity = capacity
         self.price = price
@@ -342,6 +344,7 @@ from drop import *
 
 class Shop():
     goods = make_one_list_with_drop(list_of_all_items)
+    goods.append(old_key)
 
     def __init__(self):
         pass

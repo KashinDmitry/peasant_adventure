@@ -8,9 +8,9 @@ old_key = Key("Old key", 15, "Old key: costs 15 gold, required to open founded c
 """" Here is a list of possible drops """
 
 '========================= FOOD ======================'
-bread = Food("bread", 3, 10, "bread: costs 3 gold, restores 10 health")
-apple = Food("apple", 2, 5, "apple: costs 2 gold, restores 5 health")
-milk = Food("milk", 4, 15, "milk: costs 4 gold, restores 15 health")
+apple = Food("apple", 1, 2, 5, "apple: costs 2 gold, restores 5 health")
+bread = Food("bread", 1,  3, 10, "bread: costs 3 gold, restores 10 health")
+milk = Food("milk", 2, 4, 15, "milk: costs 4 gold, restores 15 health")
 
 dropped_food = [bread, apple, milk]
 '========================= HELMETS ======================'
@@ -39,9 +39,9 @@ iron_boots = Armor("BOOTS", "iron boots", 2, 'common', 2, 9, "iron boots: common
 
 dropped_boots = [leather_boots, iron_boots]
 '========================= BAGS ======================'
-started_bag = Bag("poor bag", 'common', 2, 5, "poor bag: common quality, capacity: 2, costs 5 gold")
-linen_bag = Bag("linen bag", 'common', 4, 10, "linen bag: common quality, capacity: 4, costs 10 gold")
-silk_bag = Bag("silk bag", 'rare', 6, 20, "silk bag: rare quality, capacity: 6, costs 20 gold")
+started_bag = Bag("poor bag", 1, 'common', 2, 5, "poor bag: common quality, capacity: 2, costs 5 gold")
+linen_bag = Bag("linen bag", 1, 'common', 4, 10, "linen bag: common quality, capacity: 4, costs 10 gold")
+silk_bag = Bag("silk bag", 2, 'rare', 6, 20, "silk bag: rare quality, capacity: 6, costs 20 gold")
 
 dropped_bags = [linen_bag, silk_bag]
 '========================= Weapon ======================'
