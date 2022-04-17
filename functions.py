@@ -43,7 +43,6 @@ def handle_player_final_score(player):
     for count, pair in enumerate(values, start=1):
         print(f"{count}. {pair[0]}", end=': ')
         print(pair[1])
-    print('Thanks for the game!')
     all_values = get_score_results_from_table("Scores!A2:B40")
     if len(all_values) > 30:
         delete_unused_scores()
@@ -191,6 +190,7 @@ def shop_actions(player_inventory, shop_instance):
 
 
 def town_actions(player, player_inventory, shop, warehouse, player_armor):
+    print("You are in the town")
     while True:
         if player.health > 0:
             action = ''

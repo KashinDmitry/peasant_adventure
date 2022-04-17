@@ -19,13 +19,16 @@ class Unit:
 class Player(Unit):
     exp_for_new_level = 0
     global_game_score = 0
+    health_per_level = 20
 
     def get_exp(self, enemy):
         self.exp_for_new_level += enemy.level * 2
         if self.exp_for_new_level >= self.level * 10:
             self.exp_for_new_level = 0
             self.level += 1
-            print(f"You have reached level {self.level}!")
+            self.base_health += 20
+            self.restore_full_health()
+            print(f"You have reached level {self.level}! Health has been restored. Base health + 20")
         else:
             print(f"Player exp: {self.exp_for_new_level}/{self.level * 10}")
 
@@ -41,10 +44,8 @@ class Player(Unit):
             empty_slots_in_inventory = self.inventory_size - len(self.inventory)
             print("Inventory: [gold:", self.inventory_gold, "]", end=' ')
             print("[items: ", end='')
-            k = 1
-            for item in self.inventory:
-                print(f'[{k}.{item.name}]', end='')
-                k += 1
+            for count, item in enumerate(self.inventory, start=1):
+                print(f'[{count}.{item.name}]', end='')
             for i in range(empty_slots_in_inventory):
                 print('[ ]', end='')
             print(']')
@@ -93,9 +94,9 @@ class Player(Unit):
                 self.inventory.append(temp)
 
         def inventory_actions(self, player):
+            self.show_inventory()
             while True:
                 action = ''
-                #item_index = ''
                 print(
                     "Choose action: 1 - show inventory, 2 - use/equip X-th item, 3 - remove X-th item from inventory, 4 - close inventory menu")
                 try:
@@ -273,15 +274,15 @@ class Player(Unit):
             print("Name:", player.name)
             print("Level:", player.level)
             print("Health:", player.health)
-            print("Global score (not final):", player.global_game_score)
             for key in self.armor_keys:
                 if self.armor[key] == '-':
-                    continue
+                    print(f"{key}: -")
                 else:
                     print(f"{key}: {self.armor[key].name} -", "armor:", self.armor[key].armor)
                     total_armor += self.armor[key].armor
             print(f"Total armor: {total_armor}")
             print(f"Weapon: {self.weapon.name} - damage: {self.weapon.damage}")
+            print("Global score (not final):", player.global_game_score)
 
 
 class Food():

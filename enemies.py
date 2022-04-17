@@ -42,8 +42,8 @@ night_hunter = Unit("Night hunter", 6, 95, 95, 25)
 troll = Unit("Troll", 6, 100, 100, 27)
 sixth_level_enemies = [berserk, reaper, jumper, night_hunter, troll]
 
-old_leshy = Unit("Old leshy", 7, 150, 150, 35)
-boss = [old_leshy]
+old_org = Unit("Old ogr", 7, 150, 150, 35)
+boss = [old_org]
 
 all_enemies = {1: first_level_enemies,
                2: second_level_enemies,

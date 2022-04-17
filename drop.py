@@ -62,15 +62,15 @@ dropped_bags = [linen_bag, cloth_bag, leather_bag, silk_bag]
 '========================= Weapon ======================'
 started_sword = Weapon("WEAPON", "Rusted sword", 1, 'common', 1, 5, "Rusted sword: common quality, required level: 1, damage: 1, costs 5 gold")
 sword = Weapon("WEAPON", "Sword", 2, 'common', 3, 14, "Sword: common quality, required level: 2, damage: 3, costs 14 gold")
-long_sword = Weapon("WEAPON", "Long sword", 3, 'common', 4, 19, "Sword: common quality, required level: 3, damage: 4, costs 19 gold")
+long_sword = Weapon("WEAPON", "Long sword", 3, 'common', 4, 19, "Long sword: common quality, required level: 3, damage: 4, costs 19 gold")
 axe = Weapon("WEAPON", "Axe", 4, 'common', 5, 24, "Axe: common quality, required level: 4, damage: 5, costs 24 gold")
-broad_axe = Weapon("WEAPON", "Broad axe", 5, 'rare', 6, 29, "Sword: common quality, required level: 5, damage: 6, costs 29 gold")
-halberd = Weapon("WEAPON", "Halberd", 6, 'rare', 7, 34, "Sword: common quality, required level: 6, damage: 7, costs 34 gold")
+broad_axe = Weapon("WEAPON", "Broad axe", 5, 'rare', 6, 29, "Broad axe: rare quality, required level: 5, damage: 6, costs 29 gold")
+halberd = Weapon("WEAPON", "Halberd", 6, 'rare', 7, 34, "Halberd: rare quality, required level: 6, damage: 7, costs 34 gold")
 
 dropped_weapons = [sword, long_sword, axe, broad_axe, halberd]
 '========================= Weapon ======================'
 
-list_of_all_items = [dropped_food, dropped_helmets, dropped_chests, dropped_gloves, dropped_boots, dropped_bags, dropped_weapons]
+list_of_all_items = [dropped_food, dropped_helmets, dropped_chests, dropped_gloves, dropped_pants, dropped_boots, dropped_bags, dropped_weapons]
 
 
 def make_one_list_with_drop(list_of_all_items):
