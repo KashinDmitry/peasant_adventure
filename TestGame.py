@@ -41,10 +41,10 @@ class TestGame(unittest.TestCase):
                                                            f" Got {self.player_inventory.inventory[0].name} instead of milk"
 
     def test_take_all_items_from_drop(self):
-        for item in drop_items(4):
+        for item in drop_items(2, 1):
             take_item(self.player_inventory, item)
         assert len(
-            self.player_inventory.inventory) == self.player_inventory.bag.capacity, f'You took {len(self.player_inventory.inventory)} items,' \
+            self.player_inventory.inventory) <= self.player_inventory.bag.capacity, f'You took {len(self.player_inventory.inventory)} items,' \
                                                                                     f' but inventory has only {self.player_inventory.bag.capacity} slots'
 
     def test_kill_enemy_and_check_dropped_gold(self):

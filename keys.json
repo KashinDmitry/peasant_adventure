@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "modern-nation-346409",
+  "private_key_id": "43e24cb73e3a4f39cfb09b00fbca38e7b179f4ef",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCiHusr1FdWGBBR\n3Gz7W53wjnLLpelGWlmNS1iDANwnC7FKz3LEEbuTHiuqjAE51TTNkdtTMMDOGvUO\nWmLJHSBwtmpMC0mxY0hgqi4CpzsZRTS3D1jTgoiBil3IiAVORMxQ2TNuvEqH9TYF\nAtsCssdXKhkrCGcWH7Tp08CPFB5jNwLkOYoE2UvMc2hFJ2EU8gZfQ453ROz2UiwN\nPlU1k7GxXeGPrEZHcU1mRb6XLt4o/uA/G0P0N0nkJvGPIgojYbJIUvPJDI7jA7eI\n2K4DV/Pn/VF673qFqEmC0uWDsWX4p/EsMUcdRtG4ZBlDOhH6//0hxv40SI6Kby30\nPot5oIapAgMBAAECgf9oVP2Dd2O9RD88b16zZIKADSxTYrJ9VCfNhm+v3x3PAvdV\n7asuAztzsjbnyrH/RfZ1VSiQoQ9zlGWglwp74wK9hqdhyOHkBsDNdLenfXfLC36h\nUH8Znye6NhGku+SuOhhC74Tp/sL4PBZHo07Orb8bmTwZNY8h7cW/tUZ2zbvAnN57\niUTloxwWY/vtFe20Zmzk/yTXZEIKjCuFLKbh4PEmcUiKy2BdC79r0qGeEIf1kY1n\nNcI7SNO9X2+9jjAOIkQ0OYSOb96Ec5mCnoIqTaKYn6inc23GM7kKqjSB30VI2+dz\n1vjHUwKO4cH3SfTiuOnnSYiOUgxLdUqxsUt7KcECgYEA5Qx/j8Dumi2ZY2axVvu8\nuuCA1v2PUHDeJRihFtBBOMqAZffCO9F7tKWF0xjKc2EFxLKW9mzIsd8rjF5U3Umc\n8apr/VhVusD/tAsCInVIRC3qQGjFKB5fPC/+1UWUdcnbbViWKoUGkUzZJpnU3ngC\nMBUIKczysIbNQn/wyrf+K6ECgYEAtTJi9VGopNct0RlmVpBYcX7hvAAQW8Bp/MAG\nQD/7Vw9x+wjWWwRCVycyDDfGd/O3DNTApvehx8Noq1PGrtC4/LFW4pSF/1LaRAlY\npxUm6oqq8x2mHTjau13hRr+9uGNt0vp2Uy9LEZkpVx9qwpW/kc6qujtG8aWdH6ko\n3Z8gPgkCgYEAuWA5KW5bbfrzxshJRP3uzEyA2f9TayY+FEXvslgQQVdbPauczu8H\nMLg6LBRHXcQrd/uWRJDciWD2jN+XzZUTaV+lkOBaWhBzoxK5wourVkrW6RQiZQrX\nxw2NMKzkr8QUTFZDCtyo6RYKNbyQ1RDJrIKJHdOao5YmL+j+SANLuaECgYAw4mwi\nRSqbdlYtEI40knLaA+JAxz+ikVHG18OX9+sGPOuCT4sNOSPwwWlWNIH+AKmE860a\nHrrt2wFVH5/9r+AIhIutS2avUJoEOwVI5oL+SfT+7CPRxHH2lMhfPwGfSmvpvJrJ\nrHuzPsARei9iWeY6HyieX7mvHgA693dH+1NGiQKBgQCZ0WyzfIQ1JxWCp6FGPK8u\n4xeqGEXybasJs2Cexz3vk9saH8HvB/H5mBWVjsOdwqx6FI9g25ctofqvAig8my1T\nYpBfLZHpwSP/0chyxZI8LKuKQW6wtQ8fKEbCueiB1w8XARvnwsBXW9L+q/nzCZDC\nOHl5p4tEBcpLpGo11Yvvmg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "gamescore@modern-nation-346409.iam.gserviceaccount.com",
+  "client_id": "116989913169280934350",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/gamescore%40modern-nation-346409.iam.gserviceaccount.com"
+}

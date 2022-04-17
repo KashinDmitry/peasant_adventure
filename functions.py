@@ -13,7 +13,7 @@ def drop_items(enemy_level, dropped_gold):
     drop = []
     for i in range(amount):
         random_item = random.choice(scaled_items_for_drop)
-        print(i + 1, random_item.name)
+        print(f"{i+1}. {random_item.name}")
         drop.append(random_item)
     return drop
 
@@ -22,14 +22,13 @@ def drop_gold(player_inventory, defeated_enemy):
     dropped_gold = round(random.uniform(defeated_enemy.level, defeated_enemy.level + 2))
     player_inventory.inventory_gold += dropped_gold
     return dropped_gold
-    #print(f"You have found {dropped_gold} gold")
 
 
 def choose_items_for_drop(enemy_level):
     all_items_for_drop = make_one_list_with_drop(list_of_all_items)
     scaled_items_for_drop = []
     for item in all_items_for_drop:
-        if enemy_level - 1 <= item.level <= enemy_level:
+        if enemy_level - 2 <= item.level <= enemy_level:
             scaled_items_for_drop.append(item)
     return scaled_items_for_drop
 
@@ -85,7 +84,6 @@ def inspect_item(drop):
 def drop_actions(player_inventory, drop, player):
     while True:
         action = ''
-        item_index = ''
         empty_slots_in_inventory = player_inventory.inventory_size - len(Player.Inventory.inventory)
         print(
             "Choose action: 1 - take all, 2 - inspect X-th item, 3 - take X-th item, 4 - open inventory, 5 - close drop menu")
@@ -141,8 +139,6 @@ def drop_actions(player_inventory, drop, player):
 def shop_actions(player_inventory, shop_instance):
     while True:
         action = ''
-        item_index = ''
-        answer = ''
         print("Choose action: 1 - show goods, 2 - buy item, 3 - sell item, 4 - close shop menu")
         try:
             action = int(input())
@@ -243,7 +239,7 @@ def min_attack(base_attack):
 
 
 def max_attack(base_attack):
-    hight_attack = base_attack * 1.5
+    hight_attack = base_attack * 1.3
     return hight_attack
 
 
@@ -263,9 +259,11 @@ def fight(player, enemy):
     player_armor = Player.PlayerArmor.calculate_total_armor(player.PlayerArmor)
     additional_damage_by_weapon = Player.PlayerArmor.weapon.damage
     while player.health > 0 and enemy.health > 0:
+        sleep(1)
         if k % 2 == 0:
             player_strike = random.uniform(min_attack(player.base_attack), max_attack(player.base_attack))
             player_strike += additional_damage_by_weapon
+            player_strike = int(player_strike)
             attack_scale = attack_type()
             if attack_scale == "miss":
                 print('{yellow}Вы промахнулись{endcolor}'.format(yellow='\033[93m', endcolor='\033[0m'))
@@ -282,6 +280,7 @@ def fight(player, enemy):
         else:
             enemy_strike = random.uniform(min_attack(enemy.base_attack), max_attack(enemy.base_attack))
             attack_scale = attack_type()
+            enemy_strike = int(enemy_strike)
             if attack_scale == "miss":
                 print('{yellow}Противник промахнулся{endcolor}'.format(yellow='\033[93m', endcolor='\033[0m'))
                 enemy_strike = 0
@@ -360,7 +359,7 @@ def explore_the_world(player, player_inventory):
     enemies_list = {}
     k = 2
     while True:
-        enemies_scale = 1 + enemies_scale_counter // 5
+        enemies_scale = 1 + enemies_scale_counter // 4
         if k % 2 == 0:
             for count, event in enumerate(range(3), start=1):
                 actions.append(choose_action_in_open_world())
@@ -376,7 +375,7 @@ def explore_the_world(player, player_inventory):
                     print(f'{count}: Attack {enemies_list[count].name} (level {enemies_list[count].level})')
                 else:
                     print(f'{count}: Explore the hidden chest!')
-            print("Choose action (1, 2, 3...) or 4 - return to town")
+            print("Choose action (1, 2, 3...) or 4 - open inventory, 5 - return to town")
             try:
                 action = int(input())
                 if action == 1 or action == 2 or action == 3:
@@ -405,6 +404,8 @@ def explore_the_world(player, player_inventory):
                         enemies_list.clear()
                         k += 1
                 elif action == 4:
+                    Player.Inventory.inventory_actions(player_inventory, player)
+                elif action == 5:
                     print("Returning to town")
                     player_was_ambushed_chance = random.randint(enemies_scale, 20)
                     if player_was_ambushed_chance == 20:
