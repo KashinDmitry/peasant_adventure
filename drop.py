@@ -60,7 +60,7 @@ silk_bag = Bag("silk bag", 6, 'rare', 10, 40, "silk bag: rare quality, capacity:
 
 dropped_bags = [linen_bag, cloth_bag, leather_bag, silk_bag]
 '========================= Weapon ======================'
-started_sword = Weapon("WEAPON", "Rusted sword", 1, 'common', 1, 5, "Rusted sword: common quality, required level: 1, damage: 1, costs 5 gold")
+stick = Weapon("WEAPON", "Stick", 1, 'common', 1, 5, "A stick: poor quality, required level: 1, damage: 1, costs 2 gold")
 sword = Weapon("WEAPON", "Sword", 2, 'common', 3, 14, "Sword: common quality, required level: 2, damage: 3, costs 14 gold")
 long_sword = Weapon("WEAPON", "Long sword", 3, 'common', 4, 19, "Long sword: common quality, required level: 3, damage: 4, costs 19 gold")
 axe = Weapon("WEAPON", "Axe", 4, 'common', 5, 24, "Axe: common quality, required level: 4, damage: 5, costs 24 gold")

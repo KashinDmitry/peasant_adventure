@@ -57,8 +57,11 @@ def take_item(player_inventory, item):
     inventory_as_list = Player.Inventory.inventory
     if len(inventory_as_list) < player_inventory.inventory_size:
         inventory_as_list.append(item)
+        print(f"You have taken {item.name}")
+        return True
     else:
         print("Inventory is full")
+        return False
 
 
 def remove_item_from_list(items_list, item):
@@ -80,7 +83,7 @@ def inspect_item(drop):
         print("Incorrect input. Please enter a number")
 
 
-def drop_actions(player_inventory, drop, player):
+def drop_actions(player_inventory, drop, player, player_armor):
     while True:
         action = ''
         empty_slots_in_inventory = player_inventory.inventory_size - len(Player.Inventory.inventory)
@@ -106,17 +109,17 @@ def drop_actions(player_inventory, drop, player):
             print("Choose item to take (1, 2, 3...)")
             try:
                 item_index = int(input())
+                if take_item(player_inventory, drop[item_index - 1]):
+                    remove_item_from_list(drop, drop[item_index - 1])
             except ValueError:
                 print("Incorrect input. Please enter a number")
                 continue
             except TypeError:
                 print("Incorrect input. Please enter a number")
                 continue
-            take_item(player_inventory, drop[item_index - 1])
-            if len(Player.Inventory.inventory) == player_inventory.inventory_size:
+            except IndexError:
+                print("You have chosen item out of list. Please choose correct number")
                 continue
-            else:
-                remove_item_from_list(drop, drop[item_index - 1])
             if len(drop) == 0:
                 print("Drop list is empty")
                 break
@@ -125,7 +128,7 @@ def drop_actions(player_inventory, drop, player):
                 show_items(drop)
                 continue
         elif action == 4:
-            Player.Inventory.inventory_actions(player_inventory, player)
+            Player.Inventory.inventory_actions(player_inventory, player, player_armor)
             print("Item(s) left in your drop:")
             show_items(drop)
             continue
@@ -135,7 +138,7 @@ def drop_actions(player_inventory, drop, player):
             continue
 
 
-def shop_actions(player_inventory, shop_instance):
+def shop_actions(player_inventory, shop_instance, player_armor):
     while True:
         action = ''
         print("Choose action: 1 - show goods, 2 - buy item, 3 - sell item, 4 - close shop menu")
@@ -163,7 +166,7 @@ def shop_actions(player_inventory, shop_instance):
                 print("You have chosen item out of list. Please choose correct item")
                 continue
         elif action == 3:
-            Player.Inventory.show_inventory(player_inventory)
+            Player.Inventory.show_inventory(player_inventory, player_armor)
             print("Choose item from inventory (1, 2, 3...)")
             try:
                 item_index = int(input())
@@ -201,17 +204,17 @@ def town_actions(player, player_inventory, shop, warehouse, player_armor):
             except ValueError:
                 print("Incorrect input. Please enter a number")
             if action == 1:
-                explore_the_world(player, player_inventory)
+                explore_the_world(player, player_inventory, player_armor)
             elif action == 2:
-                Player.Inventory.inventory_actions(player_inventory, player)
+                Player.Inventory.inventory_actions(player_inventory, player, player_armor)
             elif action == 3:
                 player_armor.show_player_info(player)
                 continue
             elif action == 4:
-                warehouse.warehouse_actions(player_inventory)
+                warehouse.warehouse_actions(player_inventory, player_armor)
                 continue
             elif action == 5:
-                shop_actions(player_inventory, shop)
+                shop_actions(player_inventory, shop, player_armor)
             elif action == 6:
                 player.restore_full_health()
                 print(f"Health has been restored. Player health is {player.health}")
@@ -340,19 +343,18 @@ def choose_enemies_to_fight(enemies_scale):
     return enemies
 
 
-def open_chest(loot_scale, player_inventory, player):
+def open_chest(loot_scale, player_inventory, player, player_armor):
     if player_inventory.inventory.count(old_key) == 0:
         print("You don't have a key to open the chest")
     else:
         gold_in_the_chest = 7 * loot_scale
         player_inventory.inventory_gold += gold_in_the_chest
-        key_index = player_inventory.inventory.index(old_key)
-        player_inventory.remove_item_from_inventory(key_index + 1)
+        player_inventory.inventory.remove(old_key)
         drop = drop_items(loot_scale, gold_in_the_chest)
-        drop_actions(player_inventory, drop, player)
+        drop_actions(player_inventory, drop, player, player_armor)
 
 
-def explore_the_world(player, player_inventory):
+def explore_the_world(player, player_inventory, player_armor):
     direction = ['north', 'south', 'forest', 'river', 'west', 'east', 'fields', 'swamp', 'hill']
     actions = []
     enemies_scale_counter = 0
@@ -370,11 +372,11 @@ def explore_the_world(player, player_inventory):
         else:
             for count, i in enumerate(actions, start=1):
                 if i == 'travel':
-                    print(f'{count}: Travel to {random.choice(direction)}')
+                    print(f'{count}: \033[92mTravel\033[0m to {random.choice(direction)}')
                 elif i == 'attack':
-                    print(f'{count}: Attack {enemies_list[count].name} (level {enemies_list[count].level})')
+                    print(f'{count}: \033[91mAttack\033[0m {enemies_list[count].name} (level {enemies_list[count].level}, health {enemies_list[count].health}, base damage {enemies_list[count].base_attack})')
                 else:
-                    print(f'{count}: Explore the hidden chest!')
+                    print(f'{count}: \033[93mExplore\033[0m the hidden chest!')
             print("Choose action (1, 2, 3...) or 4 - open inventory, 5 - return to town")
             try:
                 action = int(input())
@@ -389,7 +391,7 @@ def explore_the_world(player, player_inventory):
                         print(f"you are fighting {enemies_list[action].name}")
                         player_is_dead, dropped_items = fight(player, enemies_list[action])
                         if not player_is_dead:
-                            drop_actions(player_inventory, dropped_items, player)
+                            drop_actions(player_inventory, dropped_items, player, player_armor)
                             actions.clear()
                             enemies_list.clear()
                             k += 1
@@ -398,13 +400,13 @@ def explore_the_world(player, player_inventory):
                             break
                     else:
                         print("You are going to open the chest!")
-                        open_chest(enemies_scale, player_inventory, player)
+                        open_chest(enemies_scale, player_inventory, player, player_armor)
                         print("Continue adventure...")
                         actions.clear()
                         enemies_list.clear()
                         k += 1
                 elif action == 4:
-                    Player.Inventory.inventory_actions(player_inventory, player)
+                    Player.Inventory.inventory_actions(player_inventory, player, player_armor)
                 elif action == 5:
                     print("Returning to town")
                     player_was_ambushed_chance = random.randint(enemies_scale, 20)
@@ -414,7 +416,7 @@ def explore_the_world(player, player_inventory):
                         sleep(4)
                         player_is_dead, dropped_items = fight(player, attacked_by)
                         if not player_is_dead:
-                            drop_actions(player_inventory, dropped_items, player)
+                            drop_actions(player_inventory, dropped_items, player, player_armor)
                             break
                         else:
                             break

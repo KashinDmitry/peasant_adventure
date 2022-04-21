@@ -10,7 +10,7 @@ class TestGame(unittest.TestCase):
         self.player_inventory = Player.Inventory(2, started_bag)
         self.player_warehouse = Player.Warehouse(5)
         self.player_armor = Player.PlayerArmor()
-        Player.PlayerArmor.weapon = started_sword
+        Player.PlayerArmor.weapon = stick
         self.shop = Shop()
         self.rat = Unit("Rat", 1, 50, 50, 5)
 
@@ -22,10 +22,10 @@ class TestGame(unittest.TestCase):
         assert self.player.health == 100, f'wrong amount health was restored. Should be 100, not {self.player.health}'
 
     def test_buy_item_from_shop(self):
-        Player.Inventory.inventory_gold = 5
+        Player.Inventory.inventory_gold = 7
         bread_index = self.shop.goods.index(bread)
         self.shop.buy_item_from_shop(bread_index + 1)
-        assert Player.Inventory.inventory_gold == 5 - bread.price, f'Wrong calculation. Gold left should be equal {5 - bread.price},' \
+        assert Player.Inventory.inventory_gold == 7 - bread.price, f'Wrong calculation. Gold left should be equal {7 - bread.price},' \
                                                                    f' not {Player.Inventory.inventory_gold}'
         assert self.player_inventory.inventory[0] == bread, f'Wrong bought item. Should be bread,' \
                                                             f'got {self.player_inventory.inventory[0].name} instead'
@@ -74,6 +74,7 @@ class TestGame(unittest.TestCase):
                                                               f"but current health is {self.player.health}"
 
     def test_equip_weapon_and_check(self):
+        self.player.level = 2
         self.player_inventory.inventory.append(sword)
         self.player_inventory.equip_the_weapon(sword, self.player)
         assert self.player_armor.weapon.damage == sword.damage, f"Wrong equipped weapon damage. Should be {sword.damage}," \
@@ -84,7 +85,7 @@ class TestGame(unittest.TestCase):
         assert self.player_armor.calculate_total_armor() == 0, f"You equipped armor level {iron_helmet.level} with player level {self.player.level}"
 
     def test_equip_armor_and_equip_one_more_time(self):
-        self.player.level = 2
+        self.player.level = 4
         self.player_inventory.inventory.append(iron_helmet)
         self.player_inventory.inventory.append(leather_helmet)
         iron_helmet_index = self.player_inventory.inventory.index(iron_helmet)

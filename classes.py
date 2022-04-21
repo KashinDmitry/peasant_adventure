@@ -28,7 +28,7 @@ class Player(Unit):
             self.level += 1
             self.base_health += 20
             self.restore_full_health()
-            print(f"You have reached level {self.level}! Health has been restored. Base health + 20")
+            print(f"You have reached level {self.level}! Health has been restored. Base health + {self.health_per_level}")
         else:
             print(f"Player exp: {self.exp_for_new_level}/{self.level * 10}")
 
@@ -40,15 +40,21 @@ class Player(Unit):
             self.inventory_size = inventory_size
             self.bag = bag
 
-        def show_inventory(self):
+        def show_inventory(self, player_armor):
             empty_slots_in_inventory = self.inventory_size - len(self.inventory)
-            print("Inventory: [gold:", self.inventory_gold, "]", end=' ')
+            print(f"{self.bag.name} : [gold:", self.inventory_gold, "]", end=' ')
             print("[items: ", end='')
             for count, item in enumerate(self.inventory, start=1):
                 print(f'[{count}.{item.name}]', end='')
             for i in range(empty_slots_in_inventory):
                 print('[ ]', end='')
             print(']')
+            for key in player_armor.armor_keys:
+                if player_armor.armor[key] == '-':
+                    print(f"{key}: -")
+                else:
+                    print(f"{key}: {player_armor.armor[key].name} -", "armor:", player_armor.armor[key].armor)
+            print(f"Weapon: {player_armor.weapon.name} - damage: {player_armor.weapon.damage}")
 
         def remove_item_from_inventory(self, item_index):
             print(f"{self.inventory[item_index - 1].name} has been removed from inventory")
@@ -93,8 +99,8 @@ class Player(Unit):
                 self.remove_item_from_inventory(self.inventory.index(weapon_item)+1)
                 self.inventory.append(temp)
 
-        def inventory_actions(self, player):
-            self.show_inventory()
+        def inventory_actions(self, player, player_armor):
+            self.show_inventory(player_armor)
             while True:
                 action = ''
                 print(
@@ -104,7 +110,7 @@ class Player(Unit):
                 except ValueError:
                     print("Incorrect input. Please enter a number")
                 if action == 1:
-                    self.show_inventory()
+                    self.show_inventory(player_armor)
                     continue
                 elif action == 2:
                     print("Choose item to use/equip (1, 2, 3...)")
@@ -159,7 +165,7 @@ class Player(Unit):
 
         def show_warehouse(self):
             empty_slots_in_warehouse = self.warehouse_size - len(self.warehouse)
-            print("[items: ", end='')
+            print("[items in warehouse: ", end='')
             k = 1
             for item in self.warehouse:
                 print(f'[{k}.{item.name}]', end='')
@@ -171,9 +177,9 @@ class Player(Unit):
         def remove_item_from_warehouse(self, item_index):
             self.warehouse.pop(item_index - 1)
 
-        def store_item_to_warehouse(self, player_inventory):
+        def store_item_to_warehouse(self, player_inventory, player_armor):
             print("Choose item to put into warehouse (1, 2, 3...)")
-            player_inventory.show_inventory()
+            player_inventory.show_inventory(player_armor)
             try:
                 item_index = int(input())
                 if len(self.warehouse) < self.warehouse_size:
@@ -181,7 +187,7 @@ class Player(Unit):
                     self.warehouse.append(player_inventory.inventory[item_index-1])
                     player_inventory.remove_item_from_inventory(item_index)
                 else:
-                    print("Not enough slots in warehouse")
+                    print("Not enough space in warehouse")
             except ValueError:
                 print("ValueError Incorrect input. Please enter a number")
             except TypeError:
@@ -208,10 +214,10 @@ class Player(Unit):
             except IndexError:
                 print("You have chosen item out of list. Please choose correct item")
 
-        def warehouse_actions(self, player_inventory):
+        def warehouse_actions(self, player_inventory, player_armor):
+            self.show_warehouse()
             while True:
                 action = ''
-                item_index = ''
                 print(
                     "Choose action: 1 - show warehouse, 2 - store item from inventory to warehouse, 3 - take item from warehouse, 4 - remove X-th item from warehouse, 5 - exit warehouse")
                 try:
@@ -222,7 +228,7 @@ class Player(Unit):
                     self.show_warehouse()
                     continue
                 elif action == 2:
-                    self.store_item_to_warehouse(player_inventory)
+                    self.store_item_to_warehouse(player_inventory, player_armor)
                     continue
                 elif action == 3:
                     self.take_item_from_warehouse(player_inventory)
@@ -270,18 +276,11 @@ class Player(Unit):
             return total_armor
 
         def show_player_info(self, player):
-            total_armor = 0
+            total_armor = self.calculate_total_armor()
             print("Name:", player.name)
             print("Level:", player.level)
             print("Health:", player.health)
-            for key in self.armor_keys:
-                if self.armor[key] == '-':
-                    print(f"{key}: -")
-                else:
-                    print(f"{key}: {self.armor[key].name} -", "armor:", self.armor[key].armor)
-                    total_armor += self.armor[key].armor
             print(f"Total armor: {total_armor}")
-            print(f"Weapon: {self.weapon.name} - damage: {self.weapon.damage}")
             print("Global score (not final):", player.global_game_score)
 
 
