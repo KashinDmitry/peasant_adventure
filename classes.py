@@ -71,6 +71,14 @@ class Player(Unit):
                 self.inventory.append(temp)
                 print(f"{new_bag.name} is equipped")
 
+        def eat_the_food(self, food_item, player):
+            if player.health == player.base_health:
+                print("Player health is full. No need to restore it")
+            else:
+                player.restore_health(food_item.restore_health_amount)
+                self.remove_item_from_inventory(self.inventory.index(food_item)+1)
+                print(f"You ate {food_item.name}. Current health is {player.health}")
+
         def equip_the_armor(self, armor_item, player):
             if armor_item.level > player.level:
                 print(f"Player level is too low to equip this armor. Need level {armor_item.level},"
@@ -88,7 +96,6 @@ class Player(Unit):
                     self.inventory.append(temp)
 
         def equip_the_weapon(self, weapon_item, player):
-            print("weapon_item = ", weapon_item.name)
             if weapon_item.level > player.level:
                 print(f"Player level is too low to equip this weapon. Need level {weapon_item.level},"
                       f" current player level is {player.level}")
@@ -103,8 +110,7 @@ class Player(Unit):
             self.show_inventory(player_armor)
             while True:
                 action = ''
-                print(
-                    "Choose action: 1 - show inventory, 2 - use/equip X-th item, 3 - remove X-th item from inventory, 4 - close inventory menu")
+                print("Choose action: 1 - show inventory, 2 - use/equip X-th item, 3 - inspect X-th item, 4 - remove X-th item from inventory, 5 - close inventory menu")
                 try:
                     action = int(input())
                 except ValueError:
@@ -117,8 +123,7 @@ class Player(Unit):
                     try:
                         item_index = int(input())
                         if type(self.inventory[item_index-1]) == Food:
-                            self.inventory[item_index - 1].eat_the_food(player)
-                            self.remove_item_from_inventory(item_index)
+                            self.eat_the_food(self.inventory[item_index - 1], player)
                         elif type(self.inventory[item_index-1]) == Bag:
                             self.equip_the_bag(self.inventory[item_index - 1])
                         elif type(self.inventory[item_index-1]) == Armor:
@@ -138,6 +143,19 @@ class Player(Unit):
                         print("You have chosen item out of list. Please choose correct item")
                         continue
                 elif action == 3:
+                    print("Choose item to inspect (1, 2, 3...)")
+                    try:
+                        item_index = int(input())
+                        try:
+                            print(self.inventory[item_index - 1].description)
+                            continue
+                        except IndexError:
+                            print("You have chosen item out of list. Please choose correct item")
+                    except ValueError:
+                        print("Incorrect input. Please enter a number")
+                    except TypeError:
+                        print("Incorrect input. Please enter a number")
+                elif action == 4:
                     print("Choose item to remove (1, 2, 3...)")
                     try:
                         item_index = int(input())
@@ -152,7 +170,7 @@ class Player(Unit):
                     except IndexError:
                         print("You have chosen item out of list. Please choose correct item")
                         continue
-                elif action == 4:
+                elif action == 5:
                     break
                 else:
                     continue
@@ -278,8 +296,8 @@ class Player(Unit):
         def show_player_info(self, player):
             total_armor = self.calculate_total_armor()
             print("Name:", player.name)
-            print("Level:", player.level)
-            print("Health:", player.health)
+            print(f"Level: {player.level} [Exp {player.exp_for_new_level}/{player.level * 10}]")
+            print(f"Health: {player.health}/{player.base_health}")
             print(f"Total armor: {total_armor}")
             print("Global score (not final):", player.global_game_score)
 
@@ -291,13 +309,6 @@ class Food():
         self.price = price
         self.restore_health_amount = restore_health_amount
         self.description = description
-
-    def eat_the_food(self, player):
-        if player.health == player.base_health:
-            print("Player health is full. No need to restore it")
-        else:
-            player.restore_health(self.restore_health_amount)
-            print(f"You ate {self.name}. Current health is {player.health}")
 
 
 class Armor():
@@ -353,16 +364,16 @@ class Shop():
         for count, item in enumerate(self.goods, start=1):
             print(f'{count}: {item.description}')
 
-    def buy_item_from_shop(self, item_index):
-        player_gold = Player.Inventory.inventory_gold
+    def buy_item_from_shop(self, item_index, player_inventory):
         item_price = self.goods[item_index - 1].price
-        if player_gold >= item_price:
-            Player.Inventory.inventory.append(self.goods[item_index - 1])
-            Player.Inventory.inventory_gold -= item_price
-            print(f"You have bought {self.goods[item_index - 1].name}. Gold left: {Player.Inventory.inventory_gold}")
+        if player_inventory.inventory_gold >= item_price:
+            player_inventory.inventory.append(self.goods[item_index - 1])
+            player_inventory.inventory_gold -= item_price
+            print(f"You have bought {self.goods[item_index - 1].name}. Gold left: {player_inventory.inventory_gold}")
         else:
-            print(f"Not enough gold. Player gold is {Player.Inventory.inventory_gold}")
+            print(f"Not enough gold. Player gold is {player_inventory.inventory_gold}")
 
-    def sell_item_to_shop(self, item):
-        Player.Inventory.inventory_gold += item.price//2
-        Player.Inventory.inventory.remove(item)
+    def sell_item_to_shop(self, player_inventory, item_index):
+        item = player_inventory.inventory[item_index]
+        player_inventory.inventory_gold += item.price//2
+        player_inventory.inventory.remove(item)

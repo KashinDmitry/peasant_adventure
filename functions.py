@@ -141,7 +141,7 @@ def drop_actions(player_inventory, drop, player, player_armor):
 def shop_actions(player_inventory, shop_instance, player_armor):
     while True:
         action = ''
-        print("Choose action: 1 - show goods, 2 - buy item, 3 - sell item, 4 - close shop menu")
+        print("Choose action: 1 - show goods, 2 - buy item, 3 - sell item, 4 - sell all items, 5 - close shop menu")
         try:
             action = int(input())
         except ValueError:
@@ -150,11 +150,11 @@ def shop_actions(player_inventory, shop_instance, player_armor):
             Shop.show_goods(shop_instance)
             continue
         elif action == 2:
-            print(f'You have {Player.Inventory.inventory_gold} gold')
+            print(f'You have {player_inventory.inventory_gold} gold')
             print("Choose item to buy (1, 2, 3...)")
             try:
                 item_index = int(input())
-                Shop.buy_item_from_shop(shop_instance, item_index)
+                Shop.buy_item_from_shop(shop_instance, item_index, player_inventory)
                 continue
             except ValueError:
                 print("Incorrect input. Please enter a number")
@@ -166,16 +166,16 @@ def shop_actions(player_inventory, shop_instance, player_armor):
                 print("You have chosen item out of list. Please choose correct item")
                 continue
         elif action == 3:
-            Player.Inventory.show_inventory(player_inventory, player_armor)
+            player_inventory.show_inventory(player_armor)
             print("Choose item from inventory (1, 2, 3...)")
             try:
                 item_index = int(input())
                 try:
                     print(
-                        f'You are going to sell {Player.Inventory.inventory[item_index - 1].name} for {Player.Inventory.inventory[item_index - 1].price // 2} gold, are you sure? y/n')
+                        f'You are going to sell {player_inventory.inventory[item_index - 1].name} for {player_inventory.inventory[item_index - 1].price // 2} gold, are you sure? y/n')
                     answer = input()
                     if answer == 'y':
-                        Shop.sell_item_to_shop(shop_instance, Player.Inventory.inventory[item_index - 1])
+                        Shop.sell_item_to_shop(shop_instance, player_inventory, item_index - 1)
                         print('Item was sold')
                     else:
                         continue
@@ -187,6 +187,19 @@ def shop_actions(player_inventory, shop_instance, player_armor):
             except TypeError:
                 print("Incorrect input. Please enter a number")
         elif action == 4:
+            player_inventory.show_inventory(player_armor)
+            inventory_cost = 0
+            for item in player_inventory.inventory:
+                inventory_cost += item.price // 2
+            print(f'You are going to sell all items from inventory for {inventory_cost} gold, are you sure? y/n')
+            answer = input()
+            if answer == 'y':
+                player_inventory.inventory.clear()
+                player_inventory.inventory_gold += inventory_cost
+                print('All items were sold')
+            else:
+                continue
+        elif action == 5:
             break
         else:
             continue
@@ -198,7 +211,7 @@ def town_actions(player, player_inventory, shop, warehouse, player_armor):
         if player.health > 0:
             action = ''
             print(
-                "Choose action: 1 - explore the world outside, 2- open inventory, 3 - show player info, 4 - visit warehouse, 5 - visit shop, 6 - restore full health in hospital, 7 - end the game")
+                "Choose action: 1 - explore the world outside, 2 - visit warehouse, 3 - visit shop, 4- open inventory, 5 - show player info, 6 - restore full health in hospital, 7 - end the game")
             try:
                 action = int(input())
             except ValueError:
@@ -206,15 +219,15 @@ def town_actions(player, player_inventory, shop, warehouse, player_armor):
             if action == 1:
                 explore_the_world(player, player_inventory, player_armor)
             elif action == 2:
-                Player.Inventory.inventory_actions(player_inventory, player, player_armor)
-            elif action == 3:
-                player_armor.show_player_info(player)
-                continue
-            elif action == 4:
                 warehouse.warehouse_actions(player_inventory, player_armor)
                 continue
-            elif action == 5:
+            elif action == 3:
                 shop_actions(player_inventory, shop, player_armor)
+            elif action == 4:
+                player_inventory.inventory_actions(player, player_armor)
+            elif action == 5:
+                player_armor.show_player_info(player)
+                continue
             elif action == 6:
                 player.restore_full_health()
                 print(f"Health has been restored. Player health is {player.health}")
@@ -256,7 +269,7 @@ def attack_type():
         return 'critical'
 
 
-def fight(player, enemy):
+def fight(player, enemy, player_inventory):
     print("================= Fight is starting =================")
     k = 2
     player_armor = Player.PlayerArmor.calculate_total_armor(player.PlayerArmor)
@@ -305,7 +318,7 @@ def fight(player, enemy):
         print(f"{enemy.name} has been defeated!")
         print("================= Fight has ended =================")
         player.get_exp(enemy)
-        dropped_gold = drop_gold(player.Inventory, enemy)
+        dropped_gold = drop_gold(player_inventory, enemy)
         drop_from_enemy = drop_items(enemy.level, dropped_gold)
         Player.global_game_score += enemy.level * 2
         enemy.restore_full_health()
@@ -361,7 +374,7 @@ def explore_the_world(player, player_inventory, player_armor):
     enemies_list = {}
     k = 2
     while True:
-        enemies_scale = 1 + enemies_scale_counter // 4
+        enemies_scale = 1 + enemies_scale_counter // 3
         if k % 2 == 0:
             for count, event in enumerate(range(3), start=1):
                 actions.append(choose_action_in_open_world())
@@ -376,8 +389,8 @@ def explore_the_world(player, player_inventory, player_armor):
                 elif i == 'attack':
                     print(f'{count}: \033[91mAttack\033[0m {enemies_list[count].name} (level {enemies_list[count].level}, health {enemies_list[count].health}, base damage {enemies_list[count].base_attack})')
                 else:
-                    print(f'{count}: \033[93mExplore\033[0m the hidden chest!')
-            print("Choose action (1, 2, 3...) or 4 - open inventory, 5 - return to town")
+                    print(f'{count}: \033[93mExplore\033[0m the hidden chest! (old key is required)')
+            print("Choose action (1, 2, 3...) or 4 - open inventory, 5 - show player info, 6 - return to town")
             try:
                 action = int(input())
                 if action == 1 or action == 2 or action == 3:
@@ -389,7 +402,7 @@ def explore_the_world(player, player_inventory, player_armor):
                         k += 1
                     elif actions[action-1] == 'attack':
                         print(f"you are fighting {enemies_list[action].name}")
-                        player_is_dead, dropped_items = fight(player, enemies_list[action])
+                        player_is_dead, dropped_items = fight(player, enemies_list[action], player_inventory)
                         if not player_is_dead:
                             drop_actions(player_inventory, dropped_items, player, player_armor)
                             actions.clear()
@@ -406,15 +419,17 @@ def explore_the_world(player, player_inventory, player_armor):
                         enemies_list.clear()
                         k += 1
                 elif action == 4:
-                    Player.Inventory.inventory_actions(player_inventory, player, player_armor)
+                    player_inventory.inventory_actions(player, player_armor)
                 elif action == 5:
+                    player_armor.show_player_info(player)
+                elif action == 6:
                     print("Returning to town")
                     player_was_ambushed_chance = random.randint(enemies_scale, 20)
                     if player_was_ambushed_chance == 20:
                         attacked_by = random.choice(random.choice(all_enemies))
                         print(f"You have been ambushed by {attacked_by.name} (level {attacked_by.level}) on the back road to town!")
                         sleep(4)
-                        player_is_dead, dropped_items = fight(player, attacked_by)
+                        player_is_dead, dropped_items = fight(player, attacked_by, player_inventory)
                         if not player_is_dead:
                             drop_actions(player_inventory, dropped_items, player, player_armor)
                             break
