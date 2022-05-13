@@ -282,10 +282,10 @@ def fight(player, enemy, player_inventory):
             player_strike = int(player_strike)
             attack_scale = attack_type()
             if attack_scale == "miss":
-                print('{yellow}Вы промахнулись{endcolor}'.format(yellow='\033[93m', endcolor='\033[0m'))
+                print('{yellow}You have missed{endcolor}'.format(yellow='\033[93m', endcolor='\033[0m'))
                 player_strike = 0
             elif attack_scale == "critical":
-                print('{red}КРИТИЧЕСКИЙ УДАР!{endcolor}'.format(red='\033[91m', endcolor='\033[0m'))
+                print('{red}CRITICAL HIT!{endcolor}'.format(red='\033[91m', endcolor='\033[0m'))
                 player_strike = round(player_strike, 0) * 2
             else:
                 player_strike = round(player_strike, 0)
@@ -298,16 +298,15 @@ def fight(player, enemy, player_inventory):
             attack_scale = attack_type()
             enemy_strike = int(enemy_strike)
             if attack_scale == "miss":
-                print('{yellow}Противник промахнулся{endcolor}'.format(yellow='\033[93m', endcolor='\033[0m'))
+                print('{yellow}The enemy has missed{endcolor}'.format(yellow='\033[93m', endcolor='\033[0m'))
                 enemy_strike = 0
             elif attack_scale == "critical":
-                print('{red}КРИТИЧЕСКИЙ УДАР!{endcolor}'.format(red='\033[91m', endcolor='\033[0m'))
+                print('{red}CRITICAL HIT!{endcolor}'.format(red='\033[91m', endcolor='\033[0m'))
                 enemy_strike = round(enemy_strike, 0) * 2
             else:
                 enemy_strike = round(enemy_strike, 0)
             print(f"{enemy.name} deals {enemy_strike} damage. {player_armor} damage were blocked by armor")
             if enemy_strike - player_armor <= 0:
-                enemy_strike = 0
                 print(f"{player.name}'s health = ", round(player.health))
                 k += 1
             else:

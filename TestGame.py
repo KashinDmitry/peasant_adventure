@@ -87,7 +87,7 @@ class TestGame(unittest.TestCase):
         assert self.player_armor.calculate_total_armor() == 0, f"You equipped armor level {iron_helmet.level} with player level {self.player.level}"
 
     def test_equip_armor_and_equip_one_more_time(self):
-        self.player.level = 4
+        self.player.level = 7
         self.player_inventory.inventory.append(iron_helmet)
         self.player_inventory.inventory.append(leather_helmet)
         iron_helmet_index = self.player_inventory.inventory.index(iron_helmet)
