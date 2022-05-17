@@ -1,0 +1,4 @@
+Here is a small text game 'Peasant adventure' that was developed in order to practice with classes/objects and attributes
+To play you need Python version at least 3.7 and packages from requirements.txt
+To install packages from requirements.txt execute command 'pip install -r requirements.txt'
+To start the game - open cmd, navigate to folder with downloaded game and execute a command 'python game.py'
