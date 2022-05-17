@@ -14,7 +14,7 @@ harpy = Unit("Harpy", 2, 47, 47, 11)
 bear = Unit("Bear", 2, 55, 55, 12)
 second_level_enemies = [murloc, young_goblin, goblin, harpy, bear]
 
-nimp = Unit("Nimp", 3, 65, 65, 7)
+nimp = Unit("Nimp", 3, 65, 65, 10)
 bandit = Unit("Bandit", 3, 60, 60, 12)
 skeleton = Unit("Skeleton", 3, 50, 50, 16)
 ghost = Unit("Ghost", 3, 60, 60, 13)
@@ -43,7 +43,7 @@ troll = Unit("Troll", 6, 100, 100, 28)
 sixth_level_enemies = [berserk, reaper, jumper, night_hunter, troll]
 
 old_org = Unit("Old ogr - first stage boss", 7, 150, 150, 40)
-boss = [old_org]
+boss_list = [old_org]
 
 all_enemies = {1: first_level_enemies,
                2: second_level_enemies,
@@ -51,4 +51,4 @@ all_enemies = {1: first_level_enemies,
                4: fourth_level_enemies,
                5: fifth_level_enemies,
                6: sixth_level_enemies,
-               7: boss}
+               7: boss_list}

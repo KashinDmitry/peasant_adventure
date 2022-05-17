@@ -7,7 +7,7 @@ from enemies import *
 
 
 def drop_items(enemy_level, dropped_gold):
-    amount = random.randint(1, 2)
+    amount = random.randint(0, 2)
     scaled_items_for_drop = choose_items_for_drop(enemy_level)
     print(f"You have found {dropped_gold} gold and {amount} item(s):")
     drop = []
@@ -211,7 +211,7 @@ def town_actions(player, player_inventory, shop, warehouse, player_armor):
         if player.health > 0:
             action = ''
             print(
-                "Choose action: 1 - explore the world outside, 2 - visit warehouse, 3 - visit shop, 4- open inventory, 5 - show player info, 6 - restore full health in hospital, 7 - end the game")
+                "Choose action: 1 - explore the world outside, 2 - visit warehouse, 3 - visit shop, 4 - open inventory, 5 - show player info, 6 - restore full health in hospital, 7 - end the game")
             try:
                 action = int(input())
             except ValueError:
@@ -316,13 +316,17 @@ def fight(player, enemy, player_inventory):
     if enemy.health <= 0:
         print(f"{enemy.name} has been defeated!")
         print("================= Fight has ended =================")
-        player.get_exp(enemy)
-        dropped_gold = drop_gold(player_inventory, enemy)
-        drop_from_enemy = drop_items(enemy.level, dropped_gold)
-        Player.global_game_score += enemy.level * 2
-        enemy.restore_full_health()
-        player_is_dead = False
-        return player_is_dead, drop_from_enemy
+        if enemy in boss_list:
+            print(f'Congrats! You have defeated {enemy.name}! You may end the game or farm more enemies to get better final score')
+            boss_list.remove(enemy)
+        else:
+            player.get_exp(enemy)
+            dropped_gold = drop_gold(player_inventory, enemy)
+            drop_from_enemy = drop_items(enemy.level, dropped_gold)
+            Player.global_game_score += enemy.level * 2
+            enemy.restore_full_health()
+            player_is_dead = False
+            return player_is_dead, drop_from_enemy
     else:
         print("{red}YOU DIED...{endcolor}".format(red='\033[91m', endcolor='\033[0m'))
         sleep(3)
@@ -403,7 +407,10 @@ def explore_the_world(player, player_inventory, player_armor):
                         print(f"you are fighting {enemies_list[action].name}")
                         player_is_dead, dropped_items = fight(player, enemies_list[action], player_inventory)
                         if not player_is_dead:
-                            drop_actions(player_inventory, dropped_items, player, player_armor)
+                            if len(dropped_items) > 0:
+                                drop_actions(player_inventory, dropped_items, player, player_armor)
+                            else:
+                                pass
                             actions.clear()
                             enemies_list.clear()
                             k += 1
