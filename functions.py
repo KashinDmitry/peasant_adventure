@@ -4,6 +4,9 @@ from time import sleep
 from drop import *
 from classes import Player, Shop
 from enemies import *
+from colorama import init
+
+init(autoreset=True)
 
 
 def drop_items(enemy_level, dropped_gold):
